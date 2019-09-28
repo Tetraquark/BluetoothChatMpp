@@ -7,5 +7,8 @@ object Deps {
     const val mokoCoreIosX64 = "dev.icerock.moko:core-iosx64:${Versions.mokoCore}"
     const val mokoCoreIosArm64 = "dev.icerock.moko:core-iosarm64:${Versions.mokoCore}"
 
-}
+    const val mokoMvvm = "dev.icerock.moko:mvvm:${Versions.mokoMvvm}"
+    const val mokoMvvmIosX64 = "dev.icerock.moko:mvvm-iosx64:${Versions.mokoMvvm}"
+    const val mokoMvvmIosArm64 = "dev.icerock.moko:mvvm-iosarm64:${Versions.mokoMvvm}"
 
+}

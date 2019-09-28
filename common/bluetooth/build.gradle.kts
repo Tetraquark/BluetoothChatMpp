@@ -4,6 +4,9 @@ plugins {
     id("dev.icerock.mobile.multiplatform")
 }
 
+group = "ru.tetraquark.mpp"
+version = "1.0"
+
 android {
     compileSdkVersion(Versions.Android.compileSdkVersion)
 
@@ -17,11 +20,5 @@ dependencies {
     mppLibrary(MultiPlatformLibrary(
         android = Deps.kotlinStdlibAndroid,
         common = Deps.kotlinStdlibCommon
-    ))
-
-    mppLibrary(MultiPlatformLibrary(
-        common = Deps.mokoCore,
-        iosArm64 = Deps.mokoCoreIosArm64,
-        iosX64 = Deps.mokoCoreIosX64
     ))
 }

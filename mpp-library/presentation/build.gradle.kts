@@ -24,4 +24,10 @@ dependencies {
         iosArm64 = Deps.mokoCoreIosArm64,
         iosX64 = Deps.mokoCoreIosX64
     ))
+
+    mppLibrary(MultiPlatformLibrary(
+        common = Deps.mokoMvvm,
+        iosArm64 = Deps.mokoMvvmIosArm64,
+        iosX64 = Deps.mokoMvvmIosX64
+    ))
 }
