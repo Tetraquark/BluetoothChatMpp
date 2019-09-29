@@ -10,6 +10,13 @@ object Deps {
         const val recyclerView = "androidx.recyclerview:recyclerview:${Versions.Android.recyclerView}"
     }
 
+    const val coroutinesCommon = "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:${Versions.coroutines}"
+    const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
+    const val coroutinesNative = "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:${Versions.coroutines}"
+
+    const val kodeinCore = "org.kodein.di:kodein-di-core:${Versions.kodein}"
+    const val kodeinErased = "org.kodein.di:kodein-di-erased:${Versions.kodein}"
+
     const val mokoCore = "dev.icerock.moko:core:${Versions.mokoCore}"
     const val mokoCoreIosX64 = "dev.icerock.moko:core-iosx64:${Versions.mokoCore}"
     const val mokoCoreIosArm64 = "dev.icerock.moko:core-iosarm64:${Versions.mokoCore}"

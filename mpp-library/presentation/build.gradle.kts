@@ -31,6 +31,12 @@ dependencies {
     ))
 
     mppLibrary(MultiPlatformLibrary(
+        common = Deps.coroutinesCommon,
+        android = Deps.coroutinesAndroid,
+        ios = Deps.coroutinesNative
+    ))
+
+    mppLibrary(MultiPlatformLibrary(
         common = Deps.mokoCore,
         iosArm64 = Deps.mokoCoreIosArm64,
         iosX64 = Deps.mokoCoreIosX64

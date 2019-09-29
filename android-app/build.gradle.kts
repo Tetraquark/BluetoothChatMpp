@@ -34,6 +34,9 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+
+    implementation(project(":mpp-library"))
+
     implementation(Deps.kotlinStdlibAndroid)
     implementation(Deps.Android.appcompat)
     implementation(Deps.Android.androidxCoreKtx)

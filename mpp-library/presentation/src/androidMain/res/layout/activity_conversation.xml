@@ -28,6 +28,7 @@
             android:id="@+id/message_text_field"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:text="@{conversationViewModel.inputMessageText.ld}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/message_send_button"/>

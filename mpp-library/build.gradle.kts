@@ -24,4 +24,19 @@ dependencies {
         iosArm64 = Deps.mokoCoreIosArm64,
         iosX64 = Deps.mokoCoreIosX64
     ))
+
+    mppModule(MultiPlatformModule(
+        name = ":mpp-library:data",
+        exported = true
+    ))
+
+    mppModule(MultiPlatformModule(
+        name = ":mpp-library:domain",
+        exported = true
+    ))
+
+    mppModule(MultiPlatformModule(
+        name = ":mpp-library:presentation",
+        exported = true
+    ))
 }
