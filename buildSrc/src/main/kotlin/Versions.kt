@@ -6,6 +6,10 @@ object Versions {
         const val compileSdkVersion = 28
         const val minSdkVersion = 21
         const val targetSdkVersion = 28
+
+        const val appCompat = "1.1.0"
+        const val constraintLayout = "1.1.3"
+        const val recyclerView = "1.1.0-beta04"
     }
 
     const val mokoCore = "0.1.0"

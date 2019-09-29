@@ -9,6 +9,14 @@ class ConversationViewModel(
     override val eventsDispatcher: EventsDispatcher<EventListener>
 ) : ViewModel(), EventsDispatcherOwner<ConversationViewModel.EventListener> {
 
+    init {
+        // TODO: connect to remote device
+    }
+
+    fun onSendMessageButtonClick() {
+        // TODO
+    }
+
     interface EventListener {
         fun showError(message: String)
     }

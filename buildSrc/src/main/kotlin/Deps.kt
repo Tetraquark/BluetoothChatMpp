@@ -3,6 +3,13 @@ object Deps {
     const val kotlinStdlibAndroid = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlinVersion}"
     const val kotlinStdlibCommon = "org.jetbrains.kotlin:kotlin-stdlib-common:${Versions.kotlinVersion}"
 
+    object Android {
+        const val appcompat = "androidx.appcompat:appcompat:${Versions.Android.appCompat}"
+        const val androidxCoreKtx = "androidx.core:core-ktx:${Versions.Android.appCompat}"
+        const val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.Android.constraintLayout}"
+        const val recyclerView = "androidx.recyclerview:recyclerview:${Versions.Android.recyclerView}"
+    }
+
     const val mokoCore = "dev.icerock.moko:core:${Versions.mokoCore}"
     const val mokoCoreIosX64 = "dev.icerock.moko:core-iosx64:${Versions.mokoCore}"
     const val mokoCoreIosArm64 = "dev.icerock.moko:core-iosarm64:${Versions.mokoCore}"

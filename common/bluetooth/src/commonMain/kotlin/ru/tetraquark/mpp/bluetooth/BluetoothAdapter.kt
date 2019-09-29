@@ -6,6 +6,10 @@ expect class BluetoothAdapter {
 
     fun isEnabled(): Boolean
 
+    fun startDeviceDiscovery()
+
+    fun stopDeviceDiscovery()
+
     fun getDeviceName(): String
 
     fun getDeviceAddress(): String
