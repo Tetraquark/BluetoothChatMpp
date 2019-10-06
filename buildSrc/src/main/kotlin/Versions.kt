@@ -8,6 +8,7 @@ object Versions {
         const val targetSdkVersion = 28
 
         const val appCompat = "1.1.0"
+        const val lifecycle = "2.1.0"
         const val constraintLayout = "1.1.3"
         const val recyclerView = "1.1.0-beta04"
     }

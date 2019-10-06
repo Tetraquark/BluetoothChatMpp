@@ -9,6 +9,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val appInjector = AppInjector(PlatformInjector())
+        val appInjector = AppInjector(PlatformInjector(this))
     }
 }

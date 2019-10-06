@@ -21,4 +21,8 @@ dependencies {
         android = Deps.kotlinStdlibAndroid,
         common = Deps.kotlinStdlibCommon
     ))
+
+    androidLibrary(AndroidLibrary(
+        name = Deps.Android.lifecycle
+    ))
 }

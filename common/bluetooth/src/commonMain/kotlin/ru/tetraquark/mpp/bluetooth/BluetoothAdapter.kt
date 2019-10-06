@@ -6,9 +6,11 @@ expect class BluetoothAdapter {
 
     fun isEnabled(): Boolean
 
-    fun startDeviceDiscovery()
+    fun startDeviceDiscovery(listener: DiscoveryListener)
 
     fun stopDeviceDiscovery()
+
+    fun makeDeviceVisible(seconds: Int = 60)
 
     fun getDeviceName(): String
 

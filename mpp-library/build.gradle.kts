@@ -25,6 +25,13 @@ dependencies {
         iosX64 = Deps.mokoCoreIosX64
     ))
 
+    mppLibrary(MultiPlatformLibrary(
+        android = Deps.coroutinesAndroid,
+        common = Deps.coroutinesCommon,
+        iosArm64 = Deps.coroutinesNative,
+        iosX64 = Deps.coroutinesNative
+    ))
+
     mppModule(MultiPlatformModule(
         name = ":mpp-library:data",
         exported = true
@@ -38,5 +45,13 @@ dependencies {
     mppModule(MultiPlatformModule(
         name = ":mpp-library:presentation",
         exported = true
+    ))
+
+    androidLibrary(AndroidLibrary(
+        name = Deps.Android.lifecycle
+    ))
+
+    androidLibrary(AndroidLibrary(
+        name = Deps.Android.appcompat
     ))
 }

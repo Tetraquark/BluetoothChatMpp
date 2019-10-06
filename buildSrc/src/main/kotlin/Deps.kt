@@ -6,6 +6,7 @@ object Deps {
     object Android {
         const val appcompat = "androidx.appcompat:appcompat:${Versions.Android.appCompat}"
         const val androidxCoreKtx = "androidx.core:core-ktx:${Versions.Android.appCompat}"
+        const val lifecycle = "androidx.lifecycle:lifecycle-extensions:${Versions.Android.lifecycle}"
         const val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.Android.constraintLayout}"
         const val recyclerView = "androidx.recyclerview:recyclerview:${Versions.Android.recyclerView}"
     }

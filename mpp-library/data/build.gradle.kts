@@ -20,8 +20,14 @@ dependencies {
     ))
 
     mppLibrary(MultiPlatformLibrary(
-        common = Deps.mokoCore,
-        iosArm64 = Deps.mokoCoreIosArm64,
-        iosX64 = Deps.mokoCoreIosX64
+        android = Deps.coroutinesAndroid,
+        common = Deps.coroutinesCommon,
+        iosArm64 = Deps.coroutinesNative,
+        iosX64 = Deps.coroutinesNative
+    ))
+
+    mppModule(MultiPlatformModule(
+        name = ":common:bluetooth",
+        exported = true
     ))
 }
