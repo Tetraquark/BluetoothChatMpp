@@ -16,9 +16,8 @@ import ru.tetraquark.bluetoothchatmpp.presentation.createDeviceDiscoveryViewMode
 import ru.tetraquark.bluetoothchatmpp.presentation.devicediscovery.BluetoothPeer
 import ru.tetraquark.bluetoothchatmpp.presentation.devicediscovery.DeviceDiscoveryInjector
 import ru.tetraquark.mpp.bluetooth.BluetoothAdapter
-import ru.tetraquark.mpp.bluetooth.BluetoothRemoteDevice
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.map
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 actual class PlatformInjector(
     private val application: Application
@@ -34,7 +33,7 @@ actual class PlatformInjector(
 
     val discoveryBluetoothDevicesInteractor = DiscoveryBluetoothDevicesInteractor(
         bluetoothDevicesRepository = object : BluetoothDevicesRepository {
-            override suspend fun startDeviceDiscovery(): ReceiveChannel<ru.tetraquark.bluetoothchatmpp.domain.entity.BluetoothRemoteDevice> {
+            override suspend fun startDeviceDiscovery(): Flow<ru.tetraquark.bluetoothchatmpp.domain.entity.BluetoothRemoteDevice> {
                 return bluetoothDeviceRepository.startDeviceDiscovery().map {
                     ru.tetraquark.bluetoothchatmpp.domain.entity.BluetoothRemoteDevice(
                         address = it.address,

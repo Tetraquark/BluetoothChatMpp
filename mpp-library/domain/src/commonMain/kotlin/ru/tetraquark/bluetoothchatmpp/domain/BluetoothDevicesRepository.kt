@@ -1,11 +1,11 @@
 package ru.tetraquark.bluetoothchatmpp.domain
 
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 import ru.tetraquark.bluetoothchatmpp.domain.entity.BluetoothRemoteDevice
 
 interface BluetoothDevicesRepository {
 
-    suspend fun startDeviceDiscovery(): ReceiveChannel<BluetoothRemoteDevice>
+    suspend fun startDeviceDiscovery(): Flow<BluetoothRemoteDevice>
 
     fun stopDeviceDiscovery()
 

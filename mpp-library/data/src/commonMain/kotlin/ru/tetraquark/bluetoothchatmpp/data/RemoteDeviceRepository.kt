@@ -1,17 +1,13 @@
 package ru.tetraquark.bluetoothchatmpp.data
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import ru.tetraquark.mpp.bluetooth.BluetoothAdapter
 import ru.tetraquark.mpp.bluetooth.BluetoothRemoteDevice
 import ru.tetraquark.mpp.bluetooth.DiscoveryListener
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.suspendCoroutine
 
 class RemoteDeviceRepository(
     private val bluetoothAdapter: BluetoothAdapter
@@ -21,26 +17,21 @@ class RemoteDeviceRepository(
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Default + repositoryJob
 
-    fun startDeviceDiscovery(): ReceiveChannel<BluetoothRemoteDevice> {
-        val channel = BroadcastChannel<BluetoothRemoteDevice>(Channel.BUFFERED)
+    fun startDeviceDiscovery(): Flow<BluetoothRemoteDevice> {
+        return callbackFlow {
+            bluetoothAdapter.startDeviceDiscovery(object : DiscoveryListener {
+                override fun onDiscoveryStarted() = Unit
 
-        bluetoothAdapter.startDeviceDiscovery(object : DiscoveryListener {
-            override fun onDiscoveryStarted() = Unit
-
-            override fun onDeviceFound(bluetoothRemoteDevice: BluetoothRemoteDevice) {
-                launch {
-                    channel.send(bluetoothRemoteDevice)
+                override fun onDeviceFound(bluetoothRemoteDevice: BluetoothRemoteDevice) {
+                    offer(bluetoothRemoteDevice)
                 }
-            }
 
-            override fun onDiscoveryFinished() {
-                launch {
-                    channel.cancel()
+                override fun onDiscoveryFinished() {
+                    close()
                 }
-            }
-        })
-
-        return channel.openSubscription()
+            })
+            awaitClose { cancel() }
+        }
     }
 
     fun stopDeviceDiscovery() {
