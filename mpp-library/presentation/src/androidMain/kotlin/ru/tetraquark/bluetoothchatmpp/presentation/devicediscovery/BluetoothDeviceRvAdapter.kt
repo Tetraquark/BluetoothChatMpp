@@ -12,7 +12,7 @@ class BluetoothDeviceRvAdapter(
 ) : RecyclerView.Adapter<BluetoothDeviceRvAdapter.BluetoothDeviceViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BluetoothDeviceViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_bluetooth_device, parent)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_bluetooth_device, parent, false)
         return BluetoothDeviceViewHolder(view)
     }
 

@@ -54,8 +54,17 @@ actual class PlatformInjector(
         createDeviceDiscoveryViewModel(
             eventsDispatcher = eventsDispatcherOnMain(),
             deviceDiscoveryInteractor = object : DeviceDiscoveryInteractor {
+                override val isLoading: LiveData<Boolean> = discoveryBluetoothDevicesInteractor.isLoading
+
                 override val discoveredDeviceList: LiveData<List<BluetoothPeer>> = discoveryBluetoothDevicesInteractor.discoveredDeviceList.map { list ->
-                    list.map { BluetoothPeer(it.name, it.address) }
+                    list.map {
+                        val name = if(it.name.isBlank()) {
+                            "No name"
+                        } else {
+                            it.name
+                        }
+                        BluetoothPeer(name, it.address)
+                    }
                 }
 
                 override suspend fun startDiscovery() {

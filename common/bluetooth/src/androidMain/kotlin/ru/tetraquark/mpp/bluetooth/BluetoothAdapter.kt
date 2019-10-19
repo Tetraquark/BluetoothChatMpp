@@ -29,6 +29,8 @@ actual class BluetoothAdapter {
             fun onDestroyed(source: LifecycleOwner) {
                 this@BluetoothAdapter.context = null
                 source.lifecycle.removeObserver(this)
+
+                context.unregisterReceiver(discoveryReceiver)
             }
 
         }
@@ -64,12 +66,14 @@ actual class BluetoothAdapter {
     actual fun startDeviceDiscovery(listener: DiscoveryListener) {
         discoveryListener = listener
         if(!isDiscoverDevices) {
+            isDiscoverDevices = true
             androidBluetoothAdapter.startDiscovery()
         }
     }
 
     actual fun stopDeviceDiscovery() {
         if(isDiscoverDevices) {
+            isDiscoverDevices = false
             androidBluetoothAdapter.cancelDiscovery()
         }
     }
@@ -105,8 +109,8 @@ actual class BluetoothAdapter {
                     if(bluetoothDevice != null && bluetoothDevice.bondState != BluetoothDevice.BOND_BONDED) {
                         discoveryListener?.onDeviceFound(
                             BluetoothRemoteDevice(
-                                address = bluetoothDevice.address,
-                                name = bluetoothDevice.name,
+                                address = bluetoothDevice.address.orEmpty(),
+                                name = bluetoothDevice.name.orEmpty(),
                                 type = bluetoothDevice.type
                         ))
                     }

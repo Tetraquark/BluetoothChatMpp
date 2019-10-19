@@ -6,6 +6,8 @@ interface DeviceDiscoveryInteractor {
 
     val discoveredDeviceList: LiveData<List<BluetoothPeer>>
 
+    val isLoading: LiveData<Boolean>
+
     suspend fun startDiscovery()
 
     fun stopDiscovery()

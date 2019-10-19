@@ -11,11 +11,7 @@ import kotlin.coroutines.CoroutineContext
 
 class RemoteDeviceRepository(
     private val bluetoothAdapter: BluetoothAdapter
-) : CoroutineScope {
-
-    private val repositoryJob = Job()
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Default + repositoryJob
+) {
 
     fun startDeviceDiscovery(): Flow<BluetoothRemoteDevice> {
         return callbackFlow {

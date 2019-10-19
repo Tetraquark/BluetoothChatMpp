@@ -13,6 +13,8 @@ class DeviceDiscoveryViewModel(
 
     val discoveredPeers: LiveData<List<BluetoothPeer>> = deviceDiscoveryInteractor.discoveredDeviceList
 
+    val isLoading = deviceDiscoveryInteractor.isLoading
+
     init {
         coroutineScope.launch {
             deviceDiscoveryInteractor.startDiscovery()
