@@ -5,78 +5,36 @@ import android.app.Application
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import dev.icerock.moko.mvvm.ViewModelFactory
-import dev.icerock.moko.mvvm.dispatcher.eventsDispatcherOnMain
-import dev.icerock.moko.mvvm.livedata.LiveData
-import dev.icerock.moko.mvvm.livedata.map
-import ru.tetraquark.bluetoothchatmpp.data.RemoteDeviceRepository
-import ru.tetraquark.bluetoothchatmpp.domain.DiscoveryBluetoothDevicesInteractor
-import ru.tetraquark.bluetoothchatmpp.domain.BluetoothDevicesRepository
-import ru.tetraquark.bluetoothchatmpp.presentation.devicediscovery.DeviceDiscoveryInteractor
-import ru.tetraquark.bluetoothchatmpp.presentation.createDeviceDiscoveryViewModel
-import ru.tetraquark.bluetoothchatmpp.presentation.devicediscovery.BluetoothPeer
 import ru.tetraquark.bluetoothchatmpp.presentation.devicediscovery.DeviceDiscoveryInjector
 import ru.tetraquark.mpp.bluetooth.BluetoothAdapter
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 actual class PlatformInjector(
-    private val application: Application,
-    actual val appUuid: String
+    actual val appUuid: String,
+    private val application: Application
 ) : Application.ActivityLifecycleCallbacks {
 
-    actual fun injectPlatform() {
+    internal actual fun injectPlatform() {
         application.registerActivityLifecycleCallbacks(this)
     }
 
-    val bluetoothAdapter = BluetoothAdapter(appUuid)
+    val bluetoothAdapter by lazy {
+        BluetoothAdapter(appUuid)
+    }
 
-    val bluetoothDeviceRepository = RemoteDeviceRepository(bluetoothAdapter)
+    val dataLayerFactory by lazy {
+        DataLayerFactoryImpl(bluetoothAdapter)
+    }
 
-    val discoveryBluetoothDevicesInteractor = DiscoveryBluetoothDevicesInteractor(
-        bluetoothDevicesRepository = object : BluetoothDevicesRepository {
-            override suspend fun startDeviceDiscovery(): Flow<ru.tetraquark.bluetoothchatmpp.domain.entity.BluetoothRemoteDevice> {
-                return bluetoothDeviceRepository.startDeviceDiscovery().map {
-                    ru.tetraquark.bluetoothchatmpp.domain.entity.BluetoothRemoteDevice(
-                        address = it.address,
-                        name = it.name,
-                        type = it.type
-                    )
-                }
-            }
+    val domainFactory by lazy {
+        DomainFactoryImpl(dataLayerFactory)
+    }
 
-            override fun stopDeviceDiscovery() {
-                bluetoothDeviceRepository.stopDeviceDiscovery()
-            }
-
-        }
-    )
+    val presentationFactory by lazy {
+        PresentationFactoryImpl(domainFactory)
+    }
 
     val deviceDiscoveryViewModelFactory = ViewModelFactory {
-        createDeviceDiscoveryViewModel(
-            eventsDispatcher = eventsDispatcherOnMain(),
-            deviceDiscoveryInteractor = object : DeviceDiscoveryInteractor {
-                override val isLoading: LiveData<Boolean> = discoveryBluetoothDevicesInteractor.isLoading
-
-                override val discoveredDeviceList: LiveData<List<BluetoothPeer>> = discoveryBluetoothDevicesInteractor.discoveredDeviceList.map { list ->
-                    list.map {
-                        val name = if(it.name.isBlank()) {
-                            "No name"
-                        } else {
-                            it.name
-                        }
-                        BluetoothPeer(name, it.address)
-                    }
-                }
-
-                override suspend fun startDiscovery() {
-                    discoveryBluetoothDevicesInteractor.startDevicesDiscovery()
-                }
-
-                override fun stopDiscovery() {
-                    discoveryBluetoothDevicesInteractor.stopDevicesDiscovery()
-                }
-            }
-        )
+        presentationFactory.createDeviceDiscoveryViewModel()
     }
 
     override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {

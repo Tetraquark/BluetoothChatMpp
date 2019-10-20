@@ -13,6 +13,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val appInjector = AppInjector(PlatformInjector(this, APP_UUID))
+        val appInjector = AppInjector(PlatformInjector(APP_UUID, this))
     }
 }

@@ -4,5 +4,5 @@ expect class PlatformInjector {
 
     val appUuid: String
 
-    fun injectPlatform()
+    internal fun injectPlatform()
 }
