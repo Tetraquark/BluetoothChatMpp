@@ -8,9 +8,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.lifecycle.*
+import java.io.IOException
+import java.util.*
 import kotlin.reflect.KProperty
 
-actual class BluetoothAdapter {
+actual class BluetoothAdapter(
+    actual val uuid: String,
+    actual val messagesBufferLength: Int = 1024
+) {
 
     private val androidBluetoothAdapter by BluetoothAdapterDelegate()
 
@@ -83,6 +88,26 @@ actual class BluetoothAdapter {
     @SuppressLint("HardwareIds")
     actual fun getDeviceAddress(): String = androidBluetoothAdapter.address
 
+    actual fun connectTo(bluetoothRemoteDevice: BluetoothRemoteDevice): BluetoothConnection {
+        val remoteDevice = try {
+            androidBluetoothAdapter.getRemoteDevice(bluetoothRemoteDevice.address)
+        } catch (wrongAddressException: IllegalArgumentException) {
+            throw BluetoothException("The remote device address is invalid.")
+        }
+
+        val blSocket = try {
+            // TODO: type of connection (secure or insecure)
+            remoteDevice.createRfcommSocketToServiceRecord(UUID.fromString(uuid))
+        } catch (ioException: IOException) {
+            throw BluetoothException("The remote device connection error.")
+        }
+
+        return BluetoothConnection(
+            remoteDevice = bluetoothRemoteDevice,
+            bluetoothSocket = blSocket,
+            byteBufferLength = messagesBufferLength
+        )
+    }
 
     private class BluetoothAdapterDelegate {
 

@@ -26,6 +26,7 @@ class DiscoveryBluetoothDevicesInteractor(
         val flow = bluetoothDevicesRepository.startDeviceDiscovery()
         try {
             flow.onEach {
+                // TODO: addition of lists
                 _discoveredDeviceList.value = _discoveredDeviceList.value + it
             }.collect()
         } catch (cancelException: CancellationException) {

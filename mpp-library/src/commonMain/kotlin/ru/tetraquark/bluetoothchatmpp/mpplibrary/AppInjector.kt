@@ -6,7 +6,6 @@ class AppInjector(
 
     init {
         platformInjector.injectPlatform()
-
     }
 
 }

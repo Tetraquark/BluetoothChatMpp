@@ -20,14 +20,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 actual class PlatformInjector(
-    private val application: Application
+    private val application: Application,
+    actual val appUuid: String
 ) : Application.ActivityLifecycleCallbacks {
 
     actual fun injectPlatform() {
         application.registerActivityLifecycleCallbacks(this)
     }
 
-    val bluetoothAdapter = BluetoothAdapter()
+    val bluetoothAdapter = BluetoothAdapter(appUuid)
 
     val bluetoothDeviceRepository = RemoteDeviceRepository(bluetoothAdapter)
 

@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import ru.tetraquark.mpp.bluetooth.BluetoothAdapter
 import ru.tetraquark.mpp.bluetooth.BluetoothRemoteDevice
 import ru.tetraquark.mpp.bluetooth.DiscoveryListener
-import kotlin.coroutines.CoroutineContext
 
 class RemoteDeviceRepository(
     private val bluetoothAdapter: BluetoothAdapter
