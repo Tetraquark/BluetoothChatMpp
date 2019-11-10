@@ -12,14 +12,18 @@ buildscript {
     }
 }
 
-
 allprojects {
     repositories {
         google()
         jcenter()
 
+        maven { url = uri("http://dl.bintray.com/lukaville/maven") }
         maven { url = uri("https://dl.bintray.com/icerockdev/moko") }
+        maven { url = uri("https://dl.bintray.com/icerockdev/plugins") }
     }
+
+    // workaround for https://youtrack.jetbrains.com/issue/KT-27170
+    configurations.create("compileClasspath")
 }
 
 tasks.register("clean", Delete::class).configure {

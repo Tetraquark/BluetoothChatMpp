@@ -19,5 +19,7 @@ object Versions {
 
     const val mokoCore = "0.1.0"
     const val mokoMvvm = "0.2.0"
+    const val mokoWidgets = "0.1.0-dev-1"
+    const val mokoUnits = "0.2.0-dev-1"
 
 }

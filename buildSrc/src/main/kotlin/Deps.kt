@@ -26,4 +26,11 @@ object Deps {
     const val mokoMvvmIosX64 = "dev.icerock.moko:mvvm-iosx64:${Versions.mokoMvvm}"
     const val mokoMvvmIosArm64 = "dev.icerock.moko:mvvm-iosarm64:${Versions.mokoMvvm}"
 
+    const val mokoWidgets = "dev.icerock.moko:widgets:${Versions.mokoWidgets}"
+    const val mokoWidgetsIosX64 = "dev.icerock.moko:widgets-iosx64:${Versions.mokoWidgets}"
+    const val mokoWidgetsIosArm64 = "dev.icerock.moko:widgets-iosarm64:${Versions.mokoWidgets}"
+
+    const val mokoUnits = "dev.icerock.moko:units:${Versions.mokoUnits}"
+    const val mokoUnitsIosX64 = "dev.icerock.moko:units-iosx64:${Versions.mokoUnits}"
+    const val mokoUnitsIosArm64 = "dev.icerock.moko:units-iosarm64:${Versions.mokoUnits}"
 }

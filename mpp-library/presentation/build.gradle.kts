@@ -10,7 +10,6 @@ androidExtensions {
     isExperimental = true
 }
 
-
 android {
     compileSdkVersion(Versions.Android.compileSdkVersion)
 
@@ -46,6 +45,18 @@ dependencies {
         common = Deps.mokoMvvm,
         iosArm64 = Deps.mokoMvvmIosArm64,
         iosX64 = Deps.mokoMvvmIosX64
+    ))
+
+    mppLibrary(MultiPlatformLibrary(
+        common = Deps.mokoWidgets,
+        iosArm64 = Deps.mokoWidgetsIosArm64,
+        iosX64 = Deps.mokoWidgetsIosX64
+    ))
+
+    mppLibrary(MultiPlatformLibrary(
+        common = Deps.mokoUnits,
+        iosArm64 = Deps.mokoUnitsIosArm64,
+        iosX64 = Deps.mokoUnitsIosX64
     ))
 
     androidLibrary(AndroidLibrary(
