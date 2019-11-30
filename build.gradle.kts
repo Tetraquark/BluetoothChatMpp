@@ -6,6 +6,7 @@ allprojects {
 
         maven { url = uri("https://dl.bintray.com/icerockdev/moko") }
     }
+    configurations.create("compileClasspath")
 }
 
 tasks.register("clean", Delete::class).configure {
