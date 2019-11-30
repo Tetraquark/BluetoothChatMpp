@@ -26,4 +26,8 @@ object Deps {
     const val mokoMvvmIosX64 = "dev.icerock.moko:mvvm-iosx64:${Versions.mokoMvvm}"
     const val mokoMvvmIosArm64 = "dev.icerock.moko:mvvm-iosarm64:${Versions.mokoMvvm}"
 
+    const val mokoPermissions = "dev.icerock.moko:permissions:${Versions.mokoPermissions}"
+    const val mokoPermissionsIosX64 = "dev.icerock.moko:permissions-iosx64:${Versions.mokoPermissions}"
+    const val mokoPermissionsIosArm64 = "dev.icerock.moko:permissions-iosarm64:${Versions.mokoPermissions}"
+
 }

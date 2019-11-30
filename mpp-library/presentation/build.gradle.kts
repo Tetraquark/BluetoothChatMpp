@@ -48,6 +48,12 @@ dependencies {
         iosX64 = Deps.mokoMvvmIosX64
     ))
 
+    mppLibrary(MultiPlatformLibrary(
+        common = Deps.mokoPermissions,
+        iosArm64 = Deps.mokoPermissionsIosArm64,
+        iosX64 = Deps.mokoPermissionsIosX64
+    ))
+
     androidLibrary(AndroidLibrary(
         name = Deps.Android.appcompat
     ))

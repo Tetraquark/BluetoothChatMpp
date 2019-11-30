@@ -28,6 +28,7 @@ class DeviceDiscoveryActivity : MvvmActivity<ActivityDeviceDiscoveryBinding, Dev
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.eventsDispatcher.bind(this, this)
+        viewModel.permissionsController.bind(lifecycle, supportFragmentManager)
 
         binding.peersRvlist.adapter = BluetoothDeviceRvAdapter(object : BluetoothDeviceRvAdapter.DataSource {
             override fun getItemCount(): Int = viewModel.discoveredPeers.value.size

@@ -19,5 +19,6 @@ object Versions {
 
     const val mokoCore = "0.1.0"
     const val mokoMvvm = "0.2.0"
+    const val mokoPermissions = "0.2.0"
 
 }

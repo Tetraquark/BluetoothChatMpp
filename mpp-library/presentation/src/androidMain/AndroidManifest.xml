@@ -2,13 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.tetraquark.bluetoothchatmpp.presentation" >
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application>
         <activity
             android:name="ru.tetraquark.bluetoothchatmpp.presentation.devicediscovery.DeviceDiscoveryActivity"
             android:label="DeviceDiscoveryActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
-            android:supportsRtl="true" >
+            android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="ru.tetraquark.bluetoothchatmpp.presentation.devicediscovery.DEVICE_DISCOVERY" />

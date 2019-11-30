@@ -3,6 +3,7 @@ package ru.tetraquark.bluetoothchatmpp.mpplibrary
 import dev.icerock.moko.mvvm.dispatcher.eventsDispatcherOnMain
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.map
+import dev.icerock.moko.permissions.PermissionsController
 import ru.tetraquark.bluetoothchatmpp.domain.DiscoveryBluetoothDevicesInteractor
 import ru.tetraquark.bluetoothchatmpp.presentation.PresentationFactory
 import ru.tetraquark.bluetoothchatmpp.presentation.devicediscovery.BluetoothPeer
@@ -17,6 +18,7 @@ actual class PresentationFactoryImpl(
     override fun createDeviceDiscoveryViewModel(): DeviceDiscoveryViewModel {
         return DeviceDiscoveryViewModel(
             eventsDispatcher = eventsDispatcherOnMain(),
+            permissionsController = PermissionsController(),
             deviceDiscoveryInteractor = createDeviceDiscoveryInteractor(domainFactory.getDiscoveryBluetoothDevicesInteractor())
         )
     }
