@@ -14,17 +14,9 @@ android {
 }
 
 dependencies {
-    mppLibrary(MultiPlatformLibrary(
-        android = Deps.kotlinStdlibAndroid,
-        common = Deps.kotlinStdlibCommon
-    ))
+    mppLibrary(Deps.MultiPlatform.kotlinStdLib)
 
-    mppLibrary(MultiPlatformLibrary(
-        android = Deps.coroutinesAndroid,
-        common = Deps.coroutinesCommon,
-        iosArm64 = Deps.coroutinesNative,
-        iosX64 = Deps.coroutinesNative
-    ))
+    mppLibrary(Deps.MultiPlatform.coroutines)
 
     mppModule(MultiPlatformModule(
         name = ":common:bluetooth",

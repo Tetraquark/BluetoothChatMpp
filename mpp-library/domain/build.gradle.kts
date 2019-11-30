@@ -14,27 +14,11 @@ android {
 }
 
 dependencies {
-    mppLibrary(MultiPlatformLibrary(
-        android = Deps.kotlinStdlibAndroid,
-        common = Deps.kotlinStdlibCommon
-    ))
+    mppLibrary(Deps.MultiPlatform.kotlinStdLib)
 
-    mppLibrary(MultiPlatformLibrary(
-        common = Deps.mokoCore,
-        iosArm64 = Deps.mokoCoreIosArm64,
-        iosX64 = Deps.mokoCoreIosX64
-    ))
+    mppLibrary(Deps.MultiPlatform.mokoCore)
 
-    mppLibrary(MultiPlatformLibrary(
-        common = Deps.mokoMvvm,
-        iosArm64 = Deps.mokoMvvmIosArm64,
-        iosX64 = Deps.mokoCoreIosX64
-    ))
+    mppLibrary(Deps.MultiPlatform.mokoMvvm)
 
-    mppLibrary(MultiPlatformLibrary(
-        android = Deps.coroutinesAndroid,
-        common = Deps.coroutinesCommon,
-        iosArm64 = Deps.coroutinesNative,
-        iosX64 = Deps.coroutinesNative
-    ))
+    mppLibrary(Deps.MultiPlatform.coroutines)
 }

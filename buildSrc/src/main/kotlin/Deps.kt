@@ -3,6 +3,15 @@ object Deps {
     const val kotlinStdlibAndroid = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlinVersion}"
     const val kotlinStdlibCommon = "org.jetbrains.kotlin:kotlin-stdlib-common:${Versions.kotlinVersion}"
 
+    object Plugins {
+        const val androidExtensions =
+            "org.jetbrains.kotlin:kotlin-android-extensions:${Versions.Plugins.androidExtensions}"
+    }
+
+    val plugins: Map<String, String> = mapOf(
+        "kotlin-android-extensions" to Plugins.androidExtensions
+    )
+
     object Android {
         const val appcompat = "androidx.appcompat:appcompat:${Versions.Android.appCompat}"
         const val androidxCoreKtx = "androidx.core:core-ktx:${Versions.Android.appCompat}"
@@ -11,12 +20,46 @@ object Deps {
         const val recyclerView = "androidx.recyclerview:recyclerview:${Versions.Android.recyclerView}"
     }
 
+    object MultiPlatform {
+
+        val kotlinStdLib = MultiPlatformLibrary(
+            android = Deps.kotlinStdlibAndroid,
+            common = Deps.kotlinStdlibCommon
+        )
+
+        val coroutines = MultiPlatformLibrary(
+            android = Deps.coroutinesAndroid,
+            common = Deps.coroutinesCommon,
+            iosArm64 = Deps.coroutinesNative,
+            iosX64 = Deps.coroutinesNative
+        )
+
+        val mokoCore = MultiPlatformLibrary(
+            common = Deps.mokoCore,
+            iosArm64 = Deps.mokoCoreIosArm64,
+            iosX64 = Deps.mokoCoreIosX64
+        )
+
+        val mokoMvvm = MultiPlatformLibrary(
+            common = Deps.mokoMvvm,
+            iosArm64 = Deps.mokoMvvmIosArm64,
+            iosX64 = Deps.mokoCoreIosX64
+        )
+
+        val mokoPermissions = MultiPlatformLibrary(
+            common = Deps.mokoPermissions,
+            iosArm64 = Deps.mokoPermissionsIosArm64,
+            iosX64 = Deps.mokoPermissionsIosX64
+        )
+
+    }
+
     const val coroutinesCommon = "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:${Versions.coroutines}"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
     const val coroutinesNative = "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:${Versions.coroutines}"
 
-    const val kodeinCore = "org.kodein.di:kodein-di-core:${Versions.kodein}"
-    const val kodeinErased = "org.kodein.di:kodein-di-erased:${Versions.kodein}"
+    //const val kodeinCore = "org.kodein.di:kodein-di-core:${Versions.kodein}"
+    //const val kodeinErased = "org.kodein.di:kodein-di-erased:${Versions.kodein}"
 
     const val mokoCore = "dev.icerock.moko:core:${Versions.mokoCore}"
     const val mokoCoreIosX64 = "dev.icerock.moko:core-iosx64:${Versions.mokoCore}"

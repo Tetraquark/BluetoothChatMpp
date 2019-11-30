@@ -13,39 +13,26 @@ android {
     }
 }
 
+val mppLibs = listOf(
+    Deps.MultiPlatform.kotlinStdLib,
+    Deps.MultiPlatform.coroutines,
+    Deps.MultiPlatform.mokoCore,
+    Deps.MultiPlatform.mokoMvvm,
+    Deps.MultiPlatform.mokoPermissions
+)
+
+val mppModules = listOf(
+    Modules.MultiPlatform.Common.bluetooth,
+    Modules.MultiPlatform.data,
+    Modules.MultiPlatform.domain,
+    Modules.MultiPlatform.presentation
+)
+
+setupFramework(
+    exports = mppLibs + mppModules
+)
+
 dependencies {
-    mppLibrary(MultiPlatformLibrary(
-        android = Deps.kotlinStdlibAndroid,
-        common = Deps.kotlinStdlibCommon
-    ))
-
-    mppLibrary(MultiPlatformLibrary(
-        common = Deps.mokoCore,
-        iosArm64 = Deps.mokoCoreIosArm64,
-        iosX64 = Deps.mokoCoreIosX64
-    ))
-
-    mppLibrary(MultiPlatformLibrary(
-        android = Deps.coroutinesAndroid,
-        common = Deps.coroutinesCommon,
-        iosArm64 = Deps.coroutinesNative,
-        iosX64 = Deps.coroutinesNative
-    ))
-
-    mppModule(MultiPlatformModule(
-        name = ":mpp-library:data",
-        exported = true
-    ))
-
-    mppModule(MultiPlatformModule(
-        name = ":mpp-library:domain",
-        exported = true
-    ))
-
-    mppModule(MultiPlatformModule(
-        name = ":mpp-library:presentation",
-        exported = true
-    ))
 
     androidLibrary(AndroidLibrary(
         name = Deps.Android.lifecycle
@@ -54,4 +41,10 @@ dependencies {
     androidLibrary(AndroidLibrary(
         name = Deps.Android.appcompat
     ))
+
+    mppLibs.forEach { mppLibrary(it) }
+    mppModules.forEach { mppModule(it) }
 }
+
+// dependencies graph generator
+apply(from = "https://raw.githubusercontent.com/JakeWharton/SdkSearch/master/gradle/projectDependencyGraph.gradle")

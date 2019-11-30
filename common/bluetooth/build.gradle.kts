@@ -17,10 +17,7 @@ android {
 }
 
 dependencies {
-    mppLibrary(MultiPlatformLibrary(
-        android = Deps.kotlinStdlibAndroid,
-        common = Deps.kotlinStdlibCommon
-    ))
+    mppLibrary(Deps.MultiPlatform.kotlinStdLib)
 
     androidLibrary(AndroidLibrary(
         name = Deps.Android.lifecycle
