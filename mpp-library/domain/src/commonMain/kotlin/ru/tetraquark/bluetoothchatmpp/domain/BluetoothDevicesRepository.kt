@@ -9,4 +9,8 @@ interface BluetoothDevicesRepository {
 
     fun stopDeviceDiscovery()
 
+    suspend fun createBLEConnection(remoteDevice: BluetoothRemoteDevice)
+
+    fun closeBLEConnection(remoteDevice: BluetoothRemoteDevice)
+
 }

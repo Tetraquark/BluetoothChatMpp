@@ -2,9 +2,8 @@ package ru.tetraquark.mpp.bluetooth
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.bluetooth.*
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
@@ -14,10 +13,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.os.ParcelUuid
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
-import java.io.IOException
-import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.reflect.KProperty
 
@@ -34,8 +32,6 @@ actual class BluetoothAdapter(
     private val deviceScannerListener = DeviceScanListener()
     private val discoveryReceiver = DiscoveryBroadcastReceiver()
     private var discoveryListener: DiscoveryListener? = null
-
-    private val discoveredBluetoothDevicesMap = mutableMapOf<String, BluetoothDevice>()
 
     fun bind(lifecycle: Lifecycle, context: Context) {
         this.context = context
@@ -56,6 +52,7 @@ actual class BluetoothAdapter(
         context.registerReceiver(discoveryReceiver, IntentFilter(BluetoothDevice.ACTION_FOUND))
         context.registerReceiver(discoveryReceiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED))
         context.registerReceiver(discoveryReceiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED))
+        context.registerReceiver(discoveryReceiver, IntentFilter(BluetoothDevice.ACTION_UUID))
     }
 
     actual fun isAvailable(): Boolean {
@@ -81,10 +78,11 @@ actual class BluetoothAdapter(
     }
 
     actual fun startDeviceDiscovery(listener: DiscoveryListener) {
-        discoveredBluetoothDevicesMap.clear()
         if(ContextCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             throw BluetoothException("Coarse location permission is not granted.")
         }
+
+        deviceScannerListener.resetListener()
 
         discoveryListener = listener
         if(!isDiscoverDevices.get()) {
@@ -99,7 +97,8 @@ actual class BluetoothAdapter(
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
                 .build()
 
-            androidBluetoothAdapter.bluetoothLeScanner.startScan(scanFilters, scanSettings, deviceScannerListener)
+            //androidBluetoothAdapter.bluetoothLeScanner.startScan(scanFilters, scanSettings, deviceScannerListener)
+            androidBluetoothAdapter.bluetoothLeScanner.startScan(deviceScannerListener)
             listener.onDiscoveryStarted()
         }
     }
@@ -116,31 +115,13 @@ actual class BluetoothAdapter(
     @SuppressLint("HardwareIds")
     actual fun getDeviceAddress(): String = androidBluetoothAdapter.address
 
-    actual fun connectTo(bluetoothRemoteDevice: BluetoothRemoteDevice): BluetoothConnection {
-        val remoteDevice = try {
-            androidBluetoothAdapter.getRemoteDevice(bluetoothRemoteDevice.address)
-        } catch (wrongAddressException: IllegalArgumentException) {
-            throw BluetoothException("The remote device address is invalid.")
-        }
-
-        val blSocket = try {
-            // TODO: type of connection (secure or insecure)
-            remoteDevice.createRfcommSocketToServiceRecord(UUID.fromString(uuid))
-        } catch (ioException: IOException) {
-            throw BluetoothException("The remote device connection error.")
-        }
-
-        return BluetoothConnection(
-            remoteDevice = bluetoothRemoteDevice,
-            bluetoothSocket = blSocket,
-            byteBufferLength = messagesBufferLength
-        )
+    actual fun createGattConnection(bluetoothRemoteDevice: BluetoothRemoteDevice): BLEGattConnection {
+        return BLEGattConnection(bluetoothRemoteDevice)
     }
 
     private fun onFoundBluetoothDevice(bluetoothDevice: BluetoothDevice) {
-        if(bluetoothDevice.bondState != BluetoothDevice.BOND_BONDED &&
-            !discoveredBluetoothDevicesMap.containsKey(bluetoothDevice.address)) {
-            discoveredBluetoothDevicesMap[bluetoothDevice.address] = bluetoothDevice
+        bluetoothDevice.fetchUuidsWithSdp()
+        if(bluetoothDevice.bondState != BluetoothDevice.BOND_BONDED) {
             discoveryListener?.onDeviceFound(bluetoothDevice.mapToRemoteDevice())
         }
     }
@@ -151,11 +132,7 @@ actual class BluetoothAdapter(
     }
 
     private fun BluetoothDevice.mapToRemoteDevice(): BluetoothRemoteDevice {
-        return BluetoothRemoteDevice(
-            address = address.orEmpty(),
-            name = name.orEmpty(),
-            type = type
-        )
+        return BluetoothRemoteDevice(this)
     }
 
     private class BluetoothAdapterDelegate {
@@ -183,20 +160,35 @@ actual class BluetoothAdapter(
                 BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
                     onBluetoothDeviceScanFinished()
                 }
+                BluetoothDevice.ACTION_UUID -> {
+                    intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)?.let {
+                        val parcelUuid = intent.getParcelableExtra<ParcelUuid>(BluetoothDevice.EXTRA_UUID)
+                    }
+                }
             }
         }
     }
 
     private inner class DeviceScanListener : ScanCallback() {
 
+        private val discoveredBluetoothDevicesAddresses = mutableSetOf<String>()
+
+        fun resetListener() {
+            discoveredBluetoothDevicesAddresses.clear()
+        }
+
         override fun onScanFailed(errorCode: Int) {
             onBluetoothDeviceScanFinished()
         }
 
         override fun onScanResult(callbackType: Int, result: ScanResult) {
-            onFoundBluetoothDevice(result.device)
+            result.device?.let {
+                if(!discoveredBluetoothDevicesAddresses.contains(it.address)) {
+                    discoveredBluetoothDevicesAddresses.add(it.address)
+                    onFoundBluetoothDevice(it)
+                }
+            }
         }
-
     }
 
 }

@@ -26,7 +26,7 @@ actual class BluetoothAdapter(
 
     actual fun getDeviceAddress(): String = ""
 
-    actual fun connectTo(bluetoothRemoteDevice: BluetoothRemoteDevice): BluetoothConnection {
+    actual fun connectTo(bluetoothRemoteDevice: BluetoothRemoteDevice): BLEGattConnection {
         TODO("")
     }
 

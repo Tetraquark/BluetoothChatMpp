@@ -52,6 +52,10 @@ actual class PresentationFactoryImpl(
             override fun stopDiscovery() {
                 discoveryBluetoothDevicesInteractor.stopDevicesDiscovery()
             }
+
+            override suspend fun connectToDevice(index: Int) {
+                discoveryBluetoothDevicesInteractor.connectToDevice(index)
+            }
         }
     }
 }

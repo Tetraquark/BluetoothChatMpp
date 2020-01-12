@@ -26,18 +26,27 @@ class DomainFactoryImpl(
         remoteDeviceRepository: RemoteDeviceRepository
     ): BluetoothDevicesRepository {
         return object : BluetoothDevicesRepository {
+
             override suspend fun startDeviceDiscovery(): Flow<BluetoothRemoteDevice> {
                 return remoteDeviceRepository.startDeviceDiscovery().map {
                     BluetoothRemoteDevice(
                         address = it.address,
-                        name = it.name,
-                        type = it.type
+                        name = it.name.orEmpty(),
+                        type = it.type.code
                     )
                 }
             }
 
             override fun stopDeviceDiscovery() {
                 remoteDeviceRepository.stopDeviceDiscovery()
+            }
+
+            override suspend fun createBLEConnection(remoteDevice: BluetoothRemoteDevice) {
+                remoteDeviceRepository.createConnection(remoteDevice.address)
+            }
+
+            override fun closeBLEConnection(remoteDevice: BluetoothRemoteDevice) {
+                TODO("")
             }
         }
     }

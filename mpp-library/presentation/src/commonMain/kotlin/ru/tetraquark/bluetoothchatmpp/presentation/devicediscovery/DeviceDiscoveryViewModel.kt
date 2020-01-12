@@ -1,5 +1,6 @@
 package ru.tetraquark.bluetoothchatmpp.presentation.devicediscovery
 
+import com.github.aakira.napier.Napier
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcherOwner
 import dev.icerock.moko.mvvm.livedata.LiveData
@@ -28,6 +29,22 @@ class DeviceDiscoveryViewModel(
                 // TODO:
             } catch (error: Throwable) {
                 // TODO:
+            }
+        }
+    }
+
+    fun onStopScanClick() {
+        deviceDiscoveryInteractor.stopDiscovery()
+    }
+
+    fun onBluetoothDeviceClick(index: Int) {
+        coroutineScope.launch {
+            try {
+                deviceDiscoveryInteractor.connectToDevice(index)
+                Napier.d("{DEBUG} success connected")
+                eventsDispatcher.dispatchEvent { showError("Success connect") }
+            } catch (error: Throwable) {
+                eventsDispatcher.dispatchEvent { showError(error.message ?: "Unknown error") }
             }
         }
     }

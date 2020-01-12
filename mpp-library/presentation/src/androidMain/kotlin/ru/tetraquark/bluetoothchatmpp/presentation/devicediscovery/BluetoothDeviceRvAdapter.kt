@@ -7,8 +7,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ru.tetraquark.bluetoothchatmpp.presentation.R
 
+typealias ItemClickListener = (Int) -> Unit
+
 class BluetoothDeviceRvAdapter(
-    private val dataSource: DataSource
+    private val dataSource: DataSource,
+    private val clickListener: ItemClickListener
 ) : RecyclerView.Adapter<BluetoothDeviceRvAdapter.BluetoothDeviceViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BluetoothDeviceViewHolder {
@@ -19,7 +22,7 @@ class BluetoothDeviceRvAdapter(
     override fun getItemCount(): Int = dataSource.getItemCount()
 
     override fun onBindViewHolder(holder: BluetoothDeviceViewHolder, position: Int) {
-        holder.bind(dataSource.getItem(position))
+        holder.bind(dataSource.getItem(position), clickListener)
     }
 
     class BluetoothDeviceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -28,11 +31,14 @@ class BluetoothDeviceRvAdapter(
         private val addressTextView = itemView.findViewById<TextView>(R.id.item_address)
         private val nameTextView = itemView.findViewById<TextView>(R.id.item_name)
 
-        fun bind(data: BluetoothPeer?) {
+        fun bind(data: BluetoothPeer?, clickListener: ItemClickListener) {
             data?.let {
                 indexTextView.text = layoutPosition.toString()
                 addressTextView.text = it.address
                 nameTextView.text = it.name
+            }
+            itemView.setOnClickListener {
+                clickListener(layoutPosition)
             }
         }
 

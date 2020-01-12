@@ -1,6 +1,6 @@
 package ru.tetraquark.mpp.bluetooth
 
-actual class BluetoothConnection(
+actual class BLEGattConnection(
     actual val remoteDevice: BluetoothRemoteDevice
 ) {
     actual fun isConnected(): Boolean = true

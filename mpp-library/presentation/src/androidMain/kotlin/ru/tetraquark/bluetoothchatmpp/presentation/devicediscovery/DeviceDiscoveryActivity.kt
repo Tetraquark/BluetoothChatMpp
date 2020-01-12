@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.aakira.napier.Napier
 import dev.icerock.moko.mvvm.MvvmActivity
 import dev.icerock.moko.mvvm.ViewModelFactory
 import ru.tetraquark.bluetoothchatmpp.presentation.BR
@@ -30,12 +31,15 @@ class DeviceDiscoveryActivity : MvvmActivity<ActivityDeviceDiscoveryBinding, Dev
         viewModel.eventsDispatcher.bind(this, this)
         viewModel.permissionsController.bind(lifecycle, supportFragmentManager)
 
-        binding.peersRvlist.adapter = BluetoothDeviceRvAdapter(object : BluetoothDeviceRvAdapter.DataSource {
-            override fun getItemCount(): Int = viewModel.discoveredPeers.value.size
+        binding.peersRvlist.adapter = BluetoothDeviceRvAdapter(
+            dataSource = object : BluetoothDeviceRvAdapter.DataSource {
+                override fun getItemCount(): Int = viewModel.discoveredPeers.value.size
 
-            override fun getItem(position: Int): BluetoothPeer? =
-                viewModel.discoveredPeers.value.getOrNull(position)
-        })
+                override fun getItem(position: Int): BluetoothPeer? =
+                    viewModel.discoveredPeers.value.getOrNull(position)
+            },
+            clickListener = { viewModel.onBluetoothDeviceClick(it) }
+        )
         binding.peersRvlist.layoutManager = LinearLayoutManager(this)
         binding.peersRvlist.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
@@ -49,6 +53,7 @@ class DeviceDiscoveryActivity : MvvmActivity<ActivityDeviceDiscoveryBinding, Dev
     }
 
     override fun showError(message: String) {
+        Napier.d("{DEBUG} showError: $message")
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

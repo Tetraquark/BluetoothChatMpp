@@ -12,4 +12,6 @@ interface DeviceDiscoveryInteractor {
 
     fun stopDiscovery()
 
+    suspend fun connectToDevice(index: Int)
+
 }

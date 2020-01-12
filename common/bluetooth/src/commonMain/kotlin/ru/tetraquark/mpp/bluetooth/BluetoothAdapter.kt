@@ -19,6 +19,6 @@ expect class BluetoothAdapter {
 
     fun getDeviceAddress(): String
 
-    fun connectTo(bluetoothRemoteDevice: BluetoothRemoteDevice): BluetoothConnection
+    fun createGattConnection(bluetoothRemoteDevice: BluetoothRemoteDevice): BLEGattConnection
 
 }

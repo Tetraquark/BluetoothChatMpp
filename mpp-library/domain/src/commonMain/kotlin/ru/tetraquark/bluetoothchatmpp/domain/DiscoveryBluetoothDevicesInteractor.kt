@@ -42,4 +42,10 @@ class DiscoveryBluetoothDevicesInteractor(
         _isLoading.value = false
     }
 
+    suspend fun connectToDevice(index: Int) {
+        _discoveredDeviceList.value.getOrNull(index)?.let {
+            bluetoothDevicesRepository.createBLEConnection(it)
+        }
+    }
+
 }

@@ -5,6 +5,7 @@ allprojects {
         jcenter()
 
         maven { url = uri("https://dl.bintray.com/icerockdev/moko") }
+        maven { url = uri("https://dl.bintray.com/aakira/maven") }
     }
     configurations.create("compileClasspath")
 }
