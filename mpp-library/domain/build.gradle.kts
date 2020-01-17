@@ -16,7 +16,7 @@ android {
 dependencies {
     mppLibrary(Deps.MultiPlatform.kotlinStdLib)
 
-    mppLibrary(Deps.MultiPlatform.mokoCore)
+    //mppLibrary(Deps.MultiPlatform.mokoCore)
 
     mppLibrary(Deps.MultiPlatform.mokoMvvm)
 

@@ -16,7 +16,7 @@ android {
 val mppLibs = listOf(
     Deps.MultiPlatform.kotlinStdLib,
     Deps.MultiPlatform.coroutines,
-    Deps.MultiPlatform.mokoCore,
+    //Deps.MultiPlatform.mokoCore,
     Deps.MultiPlatform.mokoMvvm,
     Deps.MultiPlatform.mokoPermissions
 )

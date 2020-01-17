@@ -21,9 +21,8 @@ object Versions {
 
     const val kodein = "6.4.0" // not used
     const val napier = "1.1.0"
-
-    const val mokoCore = "0.1.0"
-    const val mokoMvvm = "0.2.0"
-    const val mokoPermissions = "0.2.0"
+    
+    const val mokoMvvm = "0.4.0"
+    const val mokoPermissions = "0.4.0"
 
 }

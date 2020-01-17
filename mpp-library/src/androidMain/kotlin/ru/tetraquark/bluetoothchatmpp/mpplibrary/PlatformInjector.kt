@@ -5,6 +5,7 @@ import android.app.Application
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import dev.icerock.moko.mvvm.ViewModelFactory
+import dev.icerock.moko.permissions.PermissionsController
 import ru.tetraquark.bluetoothchatmpp.presentation.devicediscovery.DeviceDiscoveryInjector
 import ru.tetraquark.mpp.bluetooth.BluetoothAdapter
 
@@ -34,7 +35,7 @@ actual class PlatformInjector(
     }
 
     val deviceDiscoveryViewModelFactory = ViewModelFactory {
-        presentationFactory.createDeviceDiscoveryViewModel()
+        presentationFactory.createDeviceDiscoveryViewModel(PermissionsController(applicationContext = application.applicationContext))
     }
 
     override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {

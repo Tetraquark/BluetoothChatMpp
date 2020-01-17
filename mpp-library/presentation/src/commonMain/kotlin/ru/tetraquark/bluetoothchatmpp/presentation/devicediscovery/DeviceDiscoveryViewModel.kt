@@ -21,7 +21,7 @@ class DeviceDiscoveryViewModel(
     val isLoading = deviceDiscoveryInteractor.isLoading
 
     init {
-        coroutineScope.launch {
+        viewModelScope.launch {
             try {
                 permissionsController.providePermission(Permission.COARSE_LOCATION)
                 deviceDiscoveryInteractor.startDiscovery()
@@ -38,7 +38,7 @@ class DeviceDiscoveryViewModel(
     }
 
     fun onBluetoothDeviceClick(index: Int) {
-        coroutineScope.launch {
+        viewModelScope.launch {
             try {
                 deviceDiscoveryInteractor.connectToDevice(index)
                 Napier.d("{DEBUG} success connected")

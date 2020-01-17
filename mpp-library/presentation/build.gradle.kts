@@ -29,7 +29,7 @@ dependencies {
     mppLibrary(Deps.MultiPlatform.coroutines)
     mppLibrary(Deps.MultiPlatform.napier)
 
-    mppLibrary(Deps.MultiPlatform.mokoCore)
+    //mppLibrary(Deps.MultiPlatform.mokoCore)
     mppLibrary(Deps.MultiPlatform.mokoMvvm)
     mppLibrary(Deps.MultiPlatform.mokoPermissions)
 

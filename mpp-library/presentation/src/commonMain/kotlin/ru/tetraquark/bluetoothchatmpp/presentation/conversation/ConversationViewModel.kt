@@ -22,7 +22,7 @@ class ConversationViewModel(
     }
 
     private fun sendMessage() {
-        coroutineScope.launch {
+        viewModelScope.launch {
             try {
                 conversationInteractor.sendNewMessage(inputMessageText.value)
             } catch (exception: Throwable) {

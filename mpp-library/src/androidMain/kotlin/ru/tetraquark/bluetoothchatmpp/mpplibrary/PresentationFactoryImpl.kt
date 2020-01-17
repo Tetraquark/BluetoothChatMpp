@@ -15,10 +15,10 @@ actual class PresentationFactoryImpl(
     private val domainFactory: DomainFactory
 ): PresentationFactory {
 
-    override fun createDeviceDiscoveryViewModel(): DeviceDiscoveryViewModel {
+    override fun createDeviceDiscoveryViewModel(permissionsController: PermissionsController): DeviceDiscoveryViewModel {
         return DeviceDiscoveryViewModel(
             eventsDispatcher = eventsDispatcherOnMain(),
-            permissionsController = PermissionsController(),
+            permissionsController = permissionsController,
             deviceDiscoveryInteractor = createDeviceDiscoveryInteractor(domainFactory.getDiscoveryBluetoothDevicesInteractor())
         )
     }
