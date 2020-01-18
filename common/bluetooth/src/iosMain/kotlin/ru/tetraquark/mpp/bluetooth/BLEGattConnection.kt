@@ -1,21 +1,68 @@
 package ru.tetraquark.mpp.bluetooth
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
+import platform.CoreBluetooth.*
+import platform.Foundation.*
+import platform.darwin.NSObject
 
-actual class BLEGattConnection(
-    actual val remoteDevice: BluetoothRemoteDevice
+actual class BLEGattConnection internal constructor(
+    actual val remoteDevice: BluetoothRemoteDevice,
+    private val cbManagerHandler: CBManagerHandler
 ) : CoroutineScope {
 
     private val job = Job()
-    override val coroutineContext: CoroutineContext = Dispatchers.Main + job
+    override val coroutineContext: CoroutineContext = MainDispatcher + job
 
-    actual fun isConnected(): Boolean = true
+    private val peripheralListener = CBPeripheralListener()
 
-    actual fun send(data: ByteArray) {}
+    actual var isConnected: Boolean = false
+        private set
 
-    actual fun close() {}
+    actual var isClosed: Boolean = false
+        private set
 
-    actual fun addConnectionListener(listener: ConnectionListener) {}
+    init {
+        cbManagerHandler.addPeripheralListener(peripheralListener)
+    }
 
-    actual fun removeConnectionListener(listener: ConnectionListener) {}
+    actual suspend fun connect(autoConnect: Boolean) {
+
+    }
+
+    actual suspend fun discoverServices(): List<BLEGattService> {
+        return remoteDevice.peripheral.services?.map {
+            (it as CBService).mapToGattDTO()
+        }.orEmpty()
+    }
+
+    actual suspend fun send(data: ByteArray) {
+
+    }
+
+    actual suspend fun disconnect() {
+
+    }
+
+    actual fun close() {
+        cbManagerHandler.removePeripheralListener(peripheralListener)
+    }
+
+    inner class CBPeripheralListener : NSObject(), CBPeripheralDelegate {
+
+        override fun onPeripheralConnect(peripheral: CBPeripheral) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun onPeripheralDisconnect(peripheral: CBPeripheral) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun onPeripheralConnectionFail(peripheral: CBPeripheral, error: Int) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+    }
+
 }

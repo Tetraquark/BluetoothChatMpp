@@ -20,8 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.reflect.KProperty
 
 actual class BluetoothAdapter(
-    actual val uuid: String,
-    actual val messagesBufferLength: Int = 1024
+    actual val uuid: String
 ) {
 
     private val androidBluetoothAdapter by BluetoothAdapterDelegate()
@@ -66,6 +65,10 @@ actual class BluetoothAdapter(
 
     actual fun isEnabled(): Boolean {
         return androidBluetoothAdapter.isEnabled
+    }
+
+    actual fun isDiscovering(): Boolean {
+        return androidBluetoothAdapter.isDiscovering
     }
 
     actual fun makeDeviceVisible(seconds: Int) {

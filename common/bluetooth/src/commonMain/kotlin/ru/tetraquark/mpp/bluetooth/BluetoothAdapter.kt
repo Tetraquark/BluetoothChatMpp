@@ -3,11 +3,12 @@ package ru.tetraquark.mpp.bluetooth
 expect class BluetoothAdapter {
 
     val uuid: String
-    val messagesBufferLength: Int
 
     fun isAvailable(): Boolean
 
     fun isEnabled(): Boolean
+
+    fun isDiscovering(): Boolean
 
     fun startDeviceDiscovery(listener: DiscoveryListener)
 

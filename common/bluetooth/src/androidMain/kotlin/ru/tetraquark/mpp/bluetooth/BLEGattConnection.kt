@@ -11,7 +11,7 @@ import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
 
-actual class BLEGattConnection(
+actual class BLEGattConnection internal constructor(
     actual val remoteDevice: BluetoothRemoteDevice
 ) : CoroutineScope {
 
@@ -26,6 +26,7 @@ actual class BLEGattConnection(
     private val isConnectedAtomic = AtomicBoolean(false)
 
     actual var isClosed: Boolean = false
+        private set
 
     private var bluetoothGatt: BluetoothGatt? = null
     private fun getGatt() = bluetoothGatt
