@@ -6,7 +6,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.github.aakira.napier.Napier
 import dev.icerock.moko.mvvm.MvvmActivity
 import dev.icerock.moko.mvvm.ViewModelFactory
 import ru.tetraquark.bluetoothchatmpp.presentation.BR
@@ -53,7 +52,6 @@ class DeviceDiscoveryActivity : MvvmActivity<ActivityDeviceDiscoveryBinding, Dev
     }
 
     override fun showError(message: String) {
-        Napier.d("{DEBUG} showError: $message")
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

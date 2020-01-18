@@ -19,7 +19,6 @@ android {
 dependencies {
     mppLibrary(Deps.MultiPlatform.kotlinStdLib)
     mppLibrary(Deps.MultiPlatform.coroutines)
-    mppLibrary(Deps.MultiPlatform.napier)
 
     androidLibrary(AndroidLibrary(
         name = Deps.Android.lifecycle

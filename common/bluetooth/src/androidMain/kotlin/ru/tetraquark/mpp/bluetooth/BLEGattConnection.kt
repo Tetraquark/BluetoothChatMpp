@@ -2,7 +2,6 @@ package ru.tetraquark.mpp.bluetooth
 
 import android.bluetooth.*
 import android.os.Build
-import com.github.aakira.napier.Napier
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -38,7 +37,6 @@ actual class BLEGattConnection(
 
     private val gattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
-            Napier.d("{DEBUG} onConnectionStateChange: status $status, state $newState")
             if(status != BluetoothGatt.GATT_SUCCESS) {
                 connectionChannel.sendGattFailureResult(status)
                 return

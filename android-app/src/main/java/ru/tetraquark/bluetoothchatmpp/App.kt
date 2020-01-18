@@ -1,8 +1,6 @@
 package ru.tetraquark.bluetoothchatmpp
 
 import android.app.Application
-import com.github.aakira.napier.DebugAntilog
-import com.github.aakira.napier.Napier
 import ru.tetraquark.bluetoothchatmpp.mpplibrary.AppInjector
 import ru.tetraquark.bluetoothchatmpp.mpplibrary.PlatformInjector
 
@@ -14,8 +12,6 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
-        Napier.base(DebugAntilog())
 
         val appInjector = AppInjector(PlatformInjector(APP_UUID, this))
     }

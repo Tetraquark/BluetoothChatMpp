@@ -33,13 +33,6 @@ object Deps {
             ios = Deps.coroutinesNative
         )
 
-        val napier = MultiPlatformLibrary(
-            common = Deps.napierCommon,
-            iosArm64 = Deps.napieriosArm64,
-            iosX64 = Deps.napieriosX64,
-            android = Deps.napierAndroid
-        )
-
         val mokoMvvm = MultiPlatformLibrary(
             common = Deps.mokoMvvm,
             iosArm64 = Deps.mokoMvvmIosArm64,
@@ -59,11 +52,6 @@ object Deps {
 
     //const val kodeinCore = "org.kodein.di:kodein-di-core:${Versions.kodein}"
     //const val kodeinErased = "org.kodein.di:kodein-di-erased:${Versions.kodein}"
-
-    const val napierCommon = "com.github.aakira:napier:${Versions.napier}"
-    const val napierAndroid = "com.github.aakira:napier-android:${Versions.napier}"
-    const val napieriosArm64 = "com.github.aakira:napier-iosArm64:${Versions.napier}"
-    const val napieriosX64 = "com.github.aakira:napier-iosX64:${Versions.napier}"
 
     const val mokoMvvm = "dev.icerock.moko:mvvm:${Versions.mokoMvvm}"
     const val mokoMvvmIosX64 = "dev.icerock.moko:mvvm-iosx64:${Versions.mokoMvvm}"
