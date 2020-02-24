@@ -10,6 +10,10 @@ import ru.tetraquark.bluetoothchatmpp.presentation.devicediscovery.BluetoothPeer
 import ru.tetraquark.bluetoothchatmpp.presentation.devicediscovery.DeviceDiscoveryInteractor
 import ru.tetraquark.bluetoothchatmpp.presentation.devicediscovery.DeviceDiscoveryViewModel
 import ru.tetraquark.bluetoothchatmpp.domain.DomainFactory
+import ru.tetraquark.bluetoothchatmpp.presentation.devicediscovery.GattCharacteristic
+import ru.tetraquark.bluetoothchatmpp.presentation.devicediscovery.GattConnectionException
+import ru.tetraquark.bluetoothchatmpp.presentation.devicediscovery.GattService
+import ru.tetraquark.mpp.bluetooth.BluetoothConnectionErrorException
 
 actual class PresentationFactoryImpl(
     private val domainFactory: DomainFactory
@@ -54,7 +58,29 @@ actual class PresentationFactoryImpl(
             }
 
             override suspend fun connectToDevice(index: Int) {
-                discoveryBluetoothDevicesInteractor.connectToDevice(index)
+                try {
+                    discoveryBluetoothDevicesInteractor.connectToDevice(index)
+                } catch (bleGattError: BluetoothConnectionErrorException) {
+                    throw GattConnectionException(bleGattError.message)
+                }
+            }
+
+            override suspend fun disconnectFromDevice(index: Int) {
+                discoveryBluetoothDevicesInteractor.disconnectFromDevice(index)
+            }
+
+            override suspend fun getServices(index: Int): List<GattService> {
+                return discoveryBluetoothDevicesInteractor.discoverServices().map {
+                    GattService(
+                        it.uuid,
+                        it.characteristics.map { bleChar ->
+                            GattCharacteristic(
+                                bleChar.uuid,
+                                bleChar.data
+                            )
+                        }
+                    )
+                }
             }
         }
     }

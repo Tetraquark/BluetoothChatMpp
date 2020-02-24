@@ -12,6 +12,6 @@ fun BluetoothGattCharacteristic.mapToGattDTO(service: BLEGattService): BLEGattCh
     return BLEGattCharacteristic(
         service = service,
         uuid = this.uuid.mapToDTO(),
-        value = this.value
+        value = this.value ?: ByteArray(0)
     )
 }

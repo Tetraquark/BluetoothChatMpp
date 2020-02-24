@@ -14,12 +14,17 @@ expect class BluetoothAdapter {
 
     fun stopDeviceDiscovery()
 
-    fun makeDeviceVisible(seconds: Int = 60)
+    fun makeDeviceVisible(seconds: Int)
 
     fun getDeviceName(): String
 
     fun getDeviceAddress(): String
 
+    /**
+     * Creates Gatt connection with remote device [bluetoothRemoteDevice].
+     *
+     * @throws BluetoothException if [bluetoothRemoteDevice] doesn't support BLE.
+     */
     fun createGattConnection(bluetoothRemoteDevice: BluetoothRemoteDevice): BLEGattConnection
 
 }

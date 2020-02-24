@@ -14,4 +14,8 @@ interface DeviceDiscoveryInteractor {
 
     suspend fun connectToDevice(index: Int)
 
+    suspend fun disconnectFromDevice(index: Int)
+
+    suspend fun getServices(index: Int): List<GattService>
+
 }

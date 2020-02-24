@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Discover"
-            app:layout_constraintEnd_toStartOf="@+id/stop_scan_button"
+            app:layout_constraintEnd_toStartOf="@+id/progressBar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -28,10 +28,10 @@
             android:id="@+id/stop_scan_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Stop scan"
             android:onClick="@{() -> deviceDiscoveryViewModel.onStopScanClick()}"
+            android:text="Stop scan"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/discover_button"
+            app:layout_constraintStart_toEndOf="@+id/progressBar"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -44,13 +44,14 @@
             app:layout_constraintTop_toBottomOf="@+id/discover_button" />
 
         <ProgressBar
+            android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:visibleOrGone="@{deviceDiscoveryViewModel.isLoading.ld}"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/peers_rvlist"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:visibleOrGone="@{deviceDiscoveryViewModel.isLoading.ld}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

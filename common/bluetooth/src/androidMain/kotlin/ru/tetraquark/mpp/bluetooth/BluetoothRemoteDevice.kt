@@ -7,7 +7,7 @@ actual class BluetoothRemoteDevice constructor(
 ) {
 
     actual val address: String = bluetoothDevice.address
-    actual val name: String? = bluetoothDevice.name
-    actual val type: BluetoothRemoteDeviceType = BluetoothRemoteDeviceType.getByCode(bluetoothDevice.type)
+    actual val name: String? = null //bluetoothDevice.name
+    actual val type: BluetoothRemoteDeviceType = BluetoothRemoteDeviceType.LE//BluetoothRemoteDeviceType.getByCode(bluetoothDevice.type)
 
 }

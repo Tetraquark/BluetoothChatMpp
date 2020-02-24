@@ -3,13 +3,16 @@ package ru.tetraquark.mpp.bluetooth
 import android.bluetooth.*
 import android.os.Build
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.channels.*
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import ru.tetraquark.mpp.bluetooth.extensions.offerSafety
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
+
+typealias ConnectionState = Pair<Int, BLEConnectionState>
 
 actual class BLEGattConnection internal constructor(
     actual val remoteDevice: BluetoothRemoteDevice
@@ -32,42 +35,33 @@ actual class BLEGattConnection internal constructor(
     private fun getGatt() = bluetoothGatt
         ?: throw BluetoothException("There is no Bluetooth Gatt connection.")
 
-
-    private val connectionChannel = Channel<GattResult<BLEConnectionState>>()
+    private val connectionStateBroadcastChannel = ConflatedBroadcastChannel<ConnectionState>()
     private val discoveryChannel = Channel<GattResult<List<BLEGattService>>>()
 
     private val gattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
-            if(status != BluetoothGatt.GATT_SUCCESS) {
-                connectionChannel.sendGattFailureResult(status)
-                return
-            }
-
-            when(newState) {
+            val state = when(newState) {
                 BluetoothProfile.STATE_CONNECTED -> {
                     isConnected = true
-                    gatt.discoverServices()
-                    connectionChannel.sendGattSuccessResult(BLEConnectionState.STATE_CONNECTED)
+                    BLEConnectionState.STATE_CONNECTED
                 }
                 BluetoothProfile.STATE_DISCONNECTED -> {
                     isConnected = false
-                    connectionChannel.sendGattSuccessResult(BLEConnectionState.STATE_DISCONNECTED)
-                    bluetoothGatt = null
+                    bluetoothGatt = gatt
+                    BLEConnectionState.STATE_DISCONNECTED
                 }
+                else -> BLEConnectionState.STATE_DISCONNECTED
             }
+
+            connectionStateBroadcastChannel.offerSafety(ConnectionState(status, state))
         }
 
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             if(status != BluetoothGatt.GATT_SUCCESS) {
                 discoveryChannel.sendGattFailureResult(status)
-                return
+            } else {
+                discoveryChannel.sendGattSuccessResult(gatt.services.map { it.mapToGattDTO() })
             }
-
-            discoveryChannel.sendGattSuccessResult(gatt.services.map { it.mapToGattDTO() })
-
-            //val bluetoothDesc = characteristic.getDescriptor()
-            //bluetoothDesc.setValue()
-            //gatt.writeDescriptor(bluetoothDesc)
         }
 
         override fun onCharacteristicChanged(
@@ -76,10 +70,60 @@ actual class BLEGattConnection internal constructor(
         ) {}
     }
 
-    actual suspend fun connect(autoConnect: Boolean) {
-        gattRequest(connectionChannel) {
-            bluetoothGatt = remoteDevice.bluetoothDevice.connectGatt(null, autoConnect, gattCallback)
+    actual suspend fun connect(autoConnect: Boolean, timeoutMillis: Long) {
+        if(isConnected) return
+        checkCloseStatus()
+
+        val btGatt = bluetoothGatt
+        if(btGatt == null) {
+            bluetoothGatt = when {
+                Build.VERSION.SDK_INT >= 26 -> {
+                    connectWithTimeout(timeoutMillis) {
+                        remoteDevice.bluetoothDevice.connectGatt(
+                            null,
+                            autoConnect,
+                            gattCallback,
+                            BluetoothDevice.TRANSPORT_AUTO,
+                            BluetoothDevice.PHY_LE_1M_MASK
+                        )
+                    }
+                }
+                Build.VERSION.SDK_INT >= 23 -> {
+                    connectWithTimeout(timeoutMillis) {
+                        remoteDevice.bluetoothDevice.connectGatt(
+                            null,
+                            autoConnect,
+                            gattCallback,
+                            BluetoothDevice.TRANSPORT_AUTO
+                        )
+                    }
+                }
+                else -> {
+                    connectWithTimeout(timeoutMillis) {
+                        remoteDevice.bluetoothDevice.connectGatt(null, autoConnect, gattCallback)
+                    }
+                }
+            }
+        } else {
+            if(autoConnect) {
+                connectWithTimeout(timeoutMillis) { btGatt.connect() }
+            } else {
+                throw BluetoothException("Can't connect second time")
+            }
         }
+
+        connectionStateBroadcastChannel.openSubscription()
+            .consumeAsFlow()
+            .first()
+            .let {
+                if(it.first != BluetoothGatt.GATT_SUCCESS) {
+                    if(it.first == GATT_COMMON_ERROR) {
+                        throw BluetoothConnectionErrorException("133 Error", GATT_COMMON_ERROR)
+                    } else {
+                        throw BluetoothException("Connection error ${it.first}.")
+                    }
+                }
+            }
     }
 
     actual suspend fun discoverServices(): List<BLEGattService> {
@@ -90,7 +134,7 @@ actual class BLEGattConnection internal constructor(
 
     actual suspend fun send(data: ByteArray) {
         if(isConnected) {
-
+            // TODO: not implemented
         }
     }
 
@@ -109,19 +153,42 @@ actual class BLEGattConnection internal constructor(
     }
 
     private fun dispose() {
+        discoveryChannel.close()
+        connectionStateBroadcastChannel.close()
         job.cancel()
+    }
+
+    private suspend inline fun <T> connectWithTimeout(
+        timeoutMillis: Long,
+        crossinline connectionBlock: () -> T
+    ): T {
+        return try {
+            withTimeout(timeoutMillis) {
+                connectionBlock()
+            }
+        } catch (ex: TimeoutCancellationException) {
+            throw BluetoothConnectionTimeoutException("Connection timed out.", timeoutMillis)
+        }
     }
 
     private val gattRequestMutex = Mutex()
 
+    private fun checkCloseStatus(): Boolean {
+        return if (isClosed) throw BluetoothConnectionClosedException("The connection is already closed.")
+        else true
+    }
+
     private suspend inline fun <T> gattRequest(
         responseChannel: ReceiveChannel<GattResult<T>>,
-        block: () -> Unit
+        block: () -> Boolean
     ): T {
         checkCloseStatus()
         return gattRequestMutex.withLock {
             checkCloseStatus()
-            block() // TODO: add check for request result (some of them returns boolean)
+
+            if(!block()) {
+                throw BluetoothException("Operation execution error.")
+            }
 
             responseChannel.receive().let {
                 when(it) {
@@ -130,24 +197,6 @@ actual class BLEGattConnection internal constructor(
                 }
             }
         }
-    }
-
-    private fun checkCloseStatus(): Boolean {
-        return if(isClosed) throw BluetoothException("The connection is already closed.")
-        else true
-    }
-
-    sealed class GattResult<out T> {
-
-        data class Success<out T> internal constructor(val data: T): GattResult<T>()
-        data class Failure internal constructor(val status: Int): GattResult<Nothing>()
-
-        companion object {
-            fun <T> success(value: T) = Success(value)
-
-            fun failure(status: Int) = Failure(status)
-        }
-
     }
 
     private fun <T> SendChannel<GattResult<T>>.sendGattSuccessResult(data: T) {
@@ -160,6 +209,10 @@ actual class BLEGattConnection internal constructor(
         launch {
             send(GattResult.failure(status))
         }
+    }
+
+    companion object {
+        private const val GATT_COMMON_ERROR = 133
     }
 
 }

@@ -10,7 +10,7 @@ expect class BLEGattConnection {
     var isClosed: Boolean
         private set
 
-    suspend fun connect(autoConnect: Boolean)
+    suspend fun connect(autoConnect: Boolean, timeoutMillis: Long)
 
     //suspend fun discoverService(uuid: UUID): BLEGattService
 

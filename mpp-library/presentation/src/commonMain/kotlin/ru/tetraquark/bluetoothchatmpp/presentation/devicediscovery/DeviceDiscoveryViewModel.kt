@@ -40,7 +40,11 @@ class DeviceDiscoveryViewModel(
         viewModelScope.launch {
             try {
                 deviceDiscoveryInteractor.connectToDevice(index)
+                val services = deviceDiscoveryInteractor.getServices(index)
+                println("Services: $services")
                 eventsDispatcher.dispatchEvent { showError("Success connect") }
+            } catch (gattException: GattConnectionException) {
+                eventsDispatcher.dispatchEvent { showError(gattException.message ?: "Unknown error") }
             } catch (error: Throwable) {
                 eventsDispatcher.dispatchEvent { showError(error.message ?: "Unknown error") }
             }

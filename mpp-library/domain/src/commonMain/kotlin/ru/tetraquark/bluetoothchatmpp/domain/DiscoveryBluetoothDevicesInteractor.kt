@@ -7,6 +7,7 @@ import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
+import ru.tetraquark.bluetoothchatmpp.domain.entity.BLEService
 import ru.tetraquark.bluetoothchatmpp.domain.entity.BluetoothRemoteDevice
 
 class DiscoveryBluetoothDevicesInteractor(
@@ -21,6 +22,8 @@ class DiscoveryBluetoothDevicesInteractor(
     private val _isLoading = MutableLiveData(false)
     val isLoading = _isLoading.readOnly()
 
+    private var connectedDevice: BluetoothRemoteDevice? = null
+
     suspend fun startDevicesDiscovery() {
         _isLoading.value = true
         val flow = bluetoothDevicesRepository.startDeviceDiscovery()
@@ -31,7 +34,6 @@ class DiscoveryBluetoothDevicesInteractor(
             }.collect()
         } catch (cancelException: CancellationException) {
             // Channel was closed
-            println("Flow was closed?")
         } finally {
             _isLoading.value = false
         }
@@ -43,9 +45,27 @@ class DiscoveryBluetoothDevicesInteractor(
     }
 
     suspend fun connectToDevice(index: Int) {
+        _isLoading.value = true
+        bluetoothDevicesRepository.stopDeviceDiscovery()
+
         _discoveredDeviceList.value.getOrNull(index)?.let {
+            connectedDevice = it
             bluetoothDevicesRepository.createBLEConnection(it)
         }
+        _isLoading.value = false
+    }
+
+    suspend fun disconnectFromDevice(index: Int) {
+        _discoveredDeviceList.value.getOrNull(index)?.let {
+            connectedDevice = null
+            bluetoothDevicesRepository.closeBLEConnection(it)
+        }
+    }
+
+    suspend fun discoverServices(): List<BLEService> {
+        return connectedDevice?.let {
+            bluetoothDevicesRepository.discoverServices(it)
+        } ?: emptyList()
     }
 
 }

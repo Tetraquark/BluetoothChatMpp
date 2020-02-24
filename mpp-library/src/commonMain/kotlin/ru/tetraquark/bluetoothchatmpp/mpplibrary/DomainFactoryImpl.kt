@@ -7,6 +7,8 @@ import ru.tetraquark.bluetoothchatmpp.data.RemoteDeviceRepository
 import ru.tetraquark.bluetoothchatmpp.domain.BluetoothDevicesRepository
 import ru.tetraquark.bluetoothchatmpp.domain.DiscoveryBluetoothDevicesInteractor
 import ru.tetraquark.bluetoothchatmpp.domain.DomainFactory
+import ru.tetraquark.bluetoothchatmpp.domain.entity.BLECharacteristic
+import ru.tetraquark.bluetoothchatmpp.domain.entity.BLEService
 import ru.tetraquark.bluetoothchatmpp.domain.entity.BluetoothRemoteDevice
 
 class DomainFactoryImpl(
@@ -45,9 +47,24 @@ class DomainFactoryImpl(
                 remoteDeviceRepository.createConnection(remoteDevice.address)
             }
 
-            override fun closeBLEConnection(remoteDevice: BluetoothRemoteDevice) {
-                TODO("")
+            override suspend fun closeBLEConnection(remoteDevice: BluetoothRemoteDevice) {
+                remoteDeviceRepository.closeConnection(remoteDevice.address)
             }
+
+            override suspend fun discoverServices(remoteDevice: BluetoothRemoteDevice): List<BLEService> {
+                return remoteDeviceRepository.readServicesForAddress(remoteDevice.address).map {
+                    BLEService(
+                        uuid = it.uuid.asString(),
+                        characteristics = it.characteristic.map { character ->
+                            BLECharacteristic(
+                                uuid = character.uuid.asString(),
+                                data = character.value
+                            )
+                        }
+                    )
+                }
+            }
+
         }
     }
 

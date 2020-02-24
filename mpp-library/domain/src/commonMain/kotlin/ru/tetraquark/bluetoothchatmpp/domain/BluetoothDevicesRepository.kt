@@ -1,6 +1,7 @@
 package ru.tetraquark.bluetoothchatmpp.domain
 
 import kotlinx.coroutines.flow.Flow
+import ru.tetraquark.bluetoothchatmpp.domain.entity.BLEService
 import ru.tetraquark.bluetoothchatmpp.domain.entity.BluetoothRemoteDevice
 
 interface BluetoothDevicesRepository {
@@ -11,6 +12,8 @@ interface BluetoothDevicesRepository {
 
     suspend fun createBLEConnection(remoteDevice: BluetoothRemoteDevice)
 
-    fun closeBLEConnection(remoteDevice: BluetoothRemoteDevice)
+    suspend fun closeBLEConnection(remoteDevice: BluetoothRemoteDevice)
+
+    suspend fun discoverServices(remoteDevice: BluetoothRemoteDevice): List<BLEService>
 
 }

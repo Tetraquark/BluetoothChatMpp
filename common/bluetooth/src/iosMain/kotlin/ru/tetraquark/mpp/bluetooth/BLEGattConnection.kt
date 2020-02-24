@@ -27,7 +27,7 @@ actual class BLEGattConnection internal constructor(
         cbManagerHandler.addPeripheralListener(peripheralListener)
     }
 
-    actual suspend fun connect(autoConnect: Boolean) {
+    actual suspend fun connect(autoConnect: Boolean, timeoutMillis: Long) {
 
     }
 
