@@ -58,4 +58,10 @@ class RemoteDeviceRepository(
         } ?: emptyList()
     }
 
+    suspend fun readConnectionRssi(address: String): Int {
+        return discoveredDevices[address]?.let { remoteDevice ->
+            bleConnectionsMap[remoteDevice]?.readRssi()
+        } ?: 0
+    }
+
 }

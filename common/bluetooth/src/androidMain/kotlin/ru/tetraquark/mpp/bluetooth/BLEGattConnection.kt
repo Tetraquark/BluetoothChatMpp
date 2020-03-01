@@ -37,6 +37,7 @@ actual class BLEGattConnection internal constructor(
 
     private val connectionStateBroadcastChannel = ConflatedBroadcastChannel<ConnectionState>()
     private val discoveryChannel = Channel<GattResult<List<BLEGattService>>>()
+    private val rssiChannel = Channel<GattResult<Int>>()
 
     private val gattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
@@ -61,6 +62,14 @@ actual class BLEGattConnection internal constructor(
                 discoveryChannel.sendGattFailureResult(status)
             } else {
                 discoveryChannel.sendGattSuccessResult(gatt.services.map { it.mapToGattDTO() })
+            }
+        }
+
+        override fun onReadRemoteRssi(gatt: BluetoothGatt, rssi: Int, status: Int) {
+            if(status != BluetoothGatt.GATT_SUCCESS) {
+                rssiChannel.sendGattFailureResult(status)
+            } else {
+                rssiChannel.sendGattSuccessResult(rssi)
             }
         }
 
@@ -141,6 +150,12 @@ actual class BLEGattConnection internal constructor(
     actual suspend fun disconnect() {
         if(!isConnected) {
             getGatt().disconnect()
+        }
+    }
+
+    actual suspend fun readRssi(): Int {
+        return gattRequest(rssiChannel) {
+            getGatt().readRemoteRssi()
         }
     }
 

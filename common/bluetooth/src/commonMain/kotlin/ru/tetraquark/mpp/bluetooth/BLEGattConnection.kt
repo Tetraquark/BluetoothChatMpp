@@ -20,6 +20,8 @@ expect class BLEGattConnection {
 
     suspend fun disconnect()
 
+    suspend fun readRssi(): Int
+
     fun close()
 
 }

@@ -40,6 +40,8 @@ class DeviceDiscoveryViewModel(
         viewModelScope.launch {
             try {
                 deviceDiscoveryInteractor.connectToDevice(index)
+                val rssi = deviceDiscoveryInteractor.readConnectionRssi()
+                println("RSSI: $rssi")
                 val services = deviceDiscoveryInteractor.getServices(index)
                 println("Services: $services")
                 eventsDispatcher.dispatchEvent { showError("Success connect") }

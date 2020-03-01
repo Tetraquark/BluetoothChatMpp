@@ -68,4 +68,10 @@ class DiscoveryBluetoothDevicesInteractor(
         } ?: emptyList()
     }
 
+    suspend fun readConnectionRssi(): Int {
+        return connectedDevice?.let {
+            bluetoothDevicesRepository.readConnectionRssi(it)
+        } ?: -1
+    }
+
 }

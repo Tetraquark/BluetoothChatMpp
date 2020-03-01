@@ -16,4 +16,6 @@ interface BluetoothDevicesRepository {
 
     suspend fun discoverServices(remoteDevice: BluetoothRemoteDevice): List<BLEService>
 
+    suspend fun readConnectionRssi(remoteDevice: BluetoothRemoteDevice): Int
+
 }

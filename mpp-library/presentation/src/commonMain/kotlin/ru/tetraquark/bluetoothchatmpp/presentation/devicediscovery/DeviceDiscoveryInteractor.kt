@@ -18,4 +18,6 @@ interface DeviceDiscoveryInteractor {
 
     suspend fun getServices(index: Int): List<GattService>
 
+    suspend fun readConnectionRssi(): Int
+
 }

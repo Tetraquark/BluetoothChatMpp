@@ -82,6 +82,10 @@ actual class PresentationFactoryImpl(
                     )
                 }
             }
+
+            override suspend fun readConnectionRssi(): Int {
+                return discoveryBluetoothDevicesInteractor.readConnectionRssi()
+            }
         }
     }
 }

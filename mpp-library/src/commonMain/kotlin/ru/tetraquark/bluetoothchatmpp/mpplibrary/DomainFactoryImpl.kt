@@ -65,6 +65,10 @@ class DomainFactoryImpl(
                 }
             }
 
+            override suspend fun readConnectionRssi(remoteDevice: BluetoothRemoteDevice): Int {
+                return remoteDeviceRepository.readConnectionRssi(remoteDevice.address)
+            }
+
         }
     }
 
