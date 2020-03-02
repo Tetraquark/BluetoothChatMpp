@@ -1,5 +1,7 @@
 package ru.tetraquark.mpp.bluetooth
 
+import kotlinx.coroutines.flow.Flow
+
 expect class BLEGattConnection {
 
     val remoteDevice: BluetoothRemoteDevice
@@ -10,7 +12,7 @@ expect class BLEGattConnection {
     var isClosed: Boolean
         private set
 
-    suspend fun connect(autoConnect: Boolean, timeoutMillis: Long)
+    suspend fun connect(autoConnect: Boolean, timeoutMillis: Long): Flow<BLEConnectionState>
 
     //suspend fun discoverService(uuid: UUID): BLEGattService
 

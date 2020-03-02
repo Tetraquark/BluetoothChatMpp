@@ -2,6 +2,7 @@ package ru.tetraquark.mpp.bluetooth
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlin.coroutines.CoroutineContext
 import platform.CoreBluetooth.*
 import platform.Foundation.*
@@ -27,8 +28,8 @@ actual class BLEGattConnection internal constructor(
         cbManagerHandler.addPeripheralListener(peripheralListener)
     }
 
-    actual suspend fun connect(autoConnect: Boolean, timeoutMillis: Long) {
-
+    actual suspend fun connect(autoConnect: Boolean, timeoutMillis: Long): Flow<BLEConnectionState> {
+        TODO("Not implemented")
     }
 
     actual suspend fun discoverServices(): List<BLEGattService> {

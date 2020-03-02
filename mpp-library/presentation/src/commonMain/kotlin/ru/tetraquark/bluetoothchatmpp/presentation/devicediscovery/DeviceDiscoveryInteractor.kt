@@ -8,6 +8,8 @@ interface DeviceDiscoveryInteractor {
 
     val isLoading: LiveData<Boolean>
 
+    val connectionState: LiveData<Boolean>
+
     suspend fun startDiscovery()
 
     fun stopDiscovery()

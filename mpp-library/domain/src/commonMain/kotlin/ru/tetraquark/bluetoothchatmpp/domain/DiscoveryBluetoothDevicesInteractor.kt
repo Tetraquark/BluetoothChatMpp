@@ -5,10 +5,15 @@ import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.map
 import dev.icerock.moko.mvvm.livedata.readOnly
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.tetraquark.bluetoothchatmpp.domain.entity.BLEService
 import ru.tetraquark.bluetoothchatmpp.domain.entity.BluetoothRemoteDevice
+import kotlin.coroutines.coroutineContext
 
 class DiscoveryBluetoothDevicesInteractor(
     private val bluetoothDevicesRepository: BluetoothDevicesRepository
@@ -23,6 +28,9 @@ class DiscoveryBluetoothDevicesInteractor(
     val isLoading = _isLoading.readOnly()
 
     private var connectedDevice: BluetoothRemoteDevice? = null
+
+    private val _connectionState = MutableLiveData(false)
+    val connectionState = _connectionState.readOnly()
 
     suspend fun startDevicesDiscovery() {
         _isLoading.value = true
@@ -48,9 +56,16 @@ class DiscoveryBluetoothDevicesInteractor(
         _isLoading.value = true
         bluetoothDevicesRepository.stopDeviceDiscovery()
 
-        _discoveredDeviceList.value.getOrNull(index)?.let {
-            connectedDevice = it
-            bluetoothDevicesRepository.createBLEConnection(it)
+        _discoveredDeviceList.value.getOrNull(index)?.let { remoteDevice ->
+            connectedDevice = remoteDevice
+
+            bluetoothDevicesRepository.createBLEConnection(remoteDevice)?.also { flow ->
+                with(CoroutineScope(coroutineContext)) {
+                    launch {
+                        flow.collect { _connectionState.value = it }
+                    }
+                }
+            }
         }
         _isLoading.value = false
     }

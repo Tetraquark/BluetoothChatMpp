@@ -4,15 +4,17 @@ import android.bluetooth.*
 import android.os.Build
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.*
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import ru.tetraquark.mpp.bluetooth.extensions.offerSafety
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
 
-typealias ConnectionState = Pair<Int, BLEConnectionState>
+private typealias ConnectionState = Pair<Int, BLEConnectionState>
 
 actual class BLEGattConnection internal constructor(
     actual val remoteDevice: BluetoothRemoteDevice
@@ -21,12 +23,12 @@ actual class BLEGattConnection internal constructor(
     private val job = Job()
     override val coroutineContext: CoroutineContext = Dispatchers.Main + job
 
+    private val isConnectedAtomic = AtomicBoolean(false)
     actual var isConnected: Boolean
         get() = isConnectedAtomic.get()
         private set(value) {
             isConnectedAtomic.set(value)
         }
-    private val isConnectedAtomic = AtomicBoolean(false)
 
     actual var isClosed: Boolean = false
         private set
@@ -38,6 +40,8 @@ actual class BLEGattConnection internal constructor(
     private val connectionStateBroadcastChannel = ConflatedBroadcastChannel<ConnectionState>()
     private val discoveryChannel = Channel<GattResult<List<BLEGattService>>>()
     private val rssiChannel = Channel<GattResult<Int>>()
+
+    private var connectionStateSubscription: Flow<BLEConnectionState>? = null
 
     private val gattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
@@ -79,8 +83,8 @@ actual class BLEGattConnection internal constructor(
         ) {}
     }
 
-    actual suspend fun connect(autoConnect: Boolean, timeoutMillis: Long) {
-        if(isConnected) return
+    actual suspend fun connect(autoConnect: Boolean, timeoutMillis: Long): Flow<BLEConnectionState> {
+        if(isConnected) return connectionStateSubscription!!
         checkCloseStatus()
 
         val btGatt = bluetoothGatt
@@ -121,18 +125,11 @@ actual class BLEGattConnection internal constructor(
             }
         }
 
-        connectionStateBroadcastChannel.openSubscription()
+        waitConnectionResponse()
+        return connectionStateBroadcastChannel.openSubscription()
             .consumeAsFlow()
-            .first()
-            .let {
-                if(it.first != BluetoothGatt.GATT_SUCCESS) {
-                    if(it.first == GATT_COMMON_ERROR) {
-                        throw BluetoothConnectionErrorException("133 Error", GATT_COMMON_ERROR)
-                    } else {
-                        throw BluetoothException("Connection error ${it.first}.")
-                    }
-                }
-            }
+            .map { it.second }
+            .apply { connectionStateSubscription = this }
     }
 
     actual suspend fun discoverServices(): List<BLEGattService> {
@@ -150,6 +147,7 @@ actual class BLEGattConnection internal constructor(
     actual suspend fun disconnect() {
         if(!isConnected) {
             getGatt().disconnect()
+            waitConnectionResponse()
         }
     }
 
@@ -161,16 +159,35 @@ actual class BLEGattConnection internal constructor(
 
     actual fun close() {
         isClosed = true
+        connectionStateSubscription = null
         dispose()
-
-        getGatt().disconnect()
-        bluetoothGatt = null
     }
 
     private fun dispose() {
+        bluetoothGatt?.disconnect()
+        isConnected = false
+        bluetoothGatt?.close()
+        isClosed = true
+
         discoveryChannel.close()
+        rssiChannel.close()
         connectionStateBroadcastChannel.close()
         job.cancel()
+    }
+
+    private suspend fun waitConnectionResponse() {
+        connectionStateBroadcastChannel.openSubscription()
+            .consumeAsFlow()
+            .first()
+            .let {
+                if(it.first != BluetoothGatt.GATT_SUCCESS) {
+                    if(it.first == GATT_COMMON_ERROR) {
+                        throw BluetoothConnectionErrorException("133 Error", GATT_COMMON_ERROR)
+                    } else {
+                        throw BluetoothException("Connection error ${it.first}.")
+                    }
+                }
+            }
     }
 
     private suspend inline fun <T> connectWithTimeout(

@@ -10,7 +10,7 @@ interface BluetoothDevicesRepository {
 
     fun stopDeviceDiscovery()
 
-    suspend fun createBLEConnection(remoteDevice: BluetoothRemoteDevice)
+    suspend fun createBLEConnection(remoteDevice: BluetoothRemoteDevice): Flow<Boolean>?
 
     suspend fun closeBLEConnection(remoteDevice: BluetoothRemoteDevice)
 

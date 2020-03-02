@@ -19,6 +19,8 @@ class DeviceDiscoveryViewModel(
 
     val isLoading = deviceDiscoveryInteractor.isLoading
 
+    val isConnected = deviceDiscoveryInteractor.connectionState
+
     init {
         viewModelScope.launch {
             try {

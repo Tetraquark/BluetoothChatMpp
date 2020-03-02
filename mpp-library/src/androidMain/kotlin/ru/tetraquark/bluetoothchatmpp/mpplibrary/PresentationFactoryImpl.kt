@@ -37,6 +37,8 @@ actual class PresentationFactoryImpl(
         return object : DeviceDiscoveryInteractor {
             override val isLoading: LiveData<Boolean> = discoveryBluetoothDevicesInteractor.isLoading
 
+            override val connectionState: LiveData<Boolean> = discoveryBluetoothDevicesInteractor.connectionState
+
             override val discoveredDeviceList: LiveData<List<BluetoothPeer>> =
                 discoveryBluetoothDevicesInteractor.discoveredDeviceList.map { list ->
                     list.map {

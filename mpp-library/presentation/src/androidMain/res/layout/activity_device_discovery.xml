@@ -53,6 +53,17 @@
             app:layout_constraintTop_toTopOf="parent"
             app:visibleOrGone="@{deviceDiscoveryViewModel.isLoading.ld}" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="!!!"
+            android:textSize="20sp"
+            app:visibleOrGone="@{deviceDiscoveryViewModel.isConnected.ld}"
+            app:layout_constraintBottom_toBottomOf="@+id/discover_button"
+            app:layout_constraintEnd_toStartOf="@+id/discover_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/discover_button" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

@@ -43,8 +43,8 @@ class DomainFactoryImpl(
                 remoteDeviceRepository.stopDeviceDiscovery()
             }
 
-            override suspend fun createBLEConnection(remoteDevice: BluetoothRemoteDevice) {
-                remoteDeviceRepository.createConnection(remoteDevice.address)
+            override suspend fun createBLEConnection(remoteDevice: BluetoothRemoteDevice): Flow<Boolean>? {
+                return remoteDeviceRepository.createConnection(remoteDevice.address)
             }
 
             override suspend fun closeBLEConnection(remoteDevice: BluetoothRemoteDevice) {

@@ -4,6 +4,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
 import ru.tetraquark.mpp.bluetooth.*
 
 class RemoteDeviceRepository(
@@ -36,14 +37,15 @@ class RemoteDeviceRepository(
         bluetoothAdapter.stopDeviceDiscovery()
     }
 
-    suspend fun createConnection(address: String): Boolean {
+    suspend fun createConnection(address: String): Flow<Boolean>? {
         discoveredDevices[address]?.let { remoteDevice ->
             val bleConnection = bluetoothAdapter.createGattConnection(remoteDevice)
             bleConnectionsMap[remoteDevice] = bleConnection
-            bleConnection.connect(false, 30_000)
-            return true
+            return bleConnection.connect(false, 30_000).map {
+                it == BLEConnectionState.STATE_CONNECTED
+            }
         }
-        return false
+        return null
     }
 
     suspend fun closeConnection(address: String) {
